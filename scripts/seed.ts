@@ -10,6 +10,9 @@ import Business from '../models/Business';
 import Client from '../models/Client';
 import Invoice from '../models/Invoice';
 
+import dns from 'dns';
+dns.setServers(['8.8.8.8', '8.8.4.4']);
+
 dotenv.config({ path: '.env.local' });
 
 async function seed() {
@@ -124,8 +127,6 @@ seed().catch((err) => {
 
 
 
-
-
 /*
 |--------------------------------------------------------------------------
 | File Functionality
@@ -137,6 +138,8 @@ seed().catch((err) => {
 | - Creates a consistent dataset that can be reused across the application.
 |
 | Responsibilities:
+| - Configures DNS settings to improve MongoDB Atlas connectivity in
+|   environments with SRV lookup issues.
 | - Connects to the MongoDB database using the configured environment.
 | - Removes existing test data before inserting fresh records.
 | - Creates sample business, client, and invoice data.
