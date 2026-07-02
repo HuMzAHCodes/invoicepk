@@ -1,10 +1,3 @@
-// jest.config.ts
-// Jest configuration for backend tests.
-// Tests run against the real Atlas test database (invoicepk_test)
-// via the MONGODB_TEST_URI swap in jest.setup.ts.
-// runInBand ensures tests run sequentially — avoids DB conflicts.
-
-// jest.config.ts
 import type { Config } from 'jest';
 
 const config: Config = {
@@ -21,57 +14,39 @@ export default config;
 
 
 
-/*
-|--------------------------------------------------------------------------
-| File Functionality
-|--------------------------------------------------------------------------
-|
-| Purpose:
-| - Configures the Jest testing environment for the backend application.
-| - Defines how automated tests are discovered and executed.
-|
-| Responsibilities:
-| - Configures Jest to work with TypeScript using ts-jest.
-| - Sets the Node.js environment for backend testing.
-| - Specifies the location and naming pattern for test files.
-| - Executes tests sequentially to prevent database conflicts.
-| - Loads shared setup logic before running tests.
-| - Resolves project path aliases for consistent module imports.
-| - Exports the Jest configuration for use by the test runner.
-|
-*/
 
+/* ============================================================================
+   COMMIT HISTORY
+   ============================================================================
 
+   chore(test): configure Jest for TypeScript project
 
+   - Added Jest configuration using ts-jest preset
+   - Enabled Node.js test environment
+   - Configured Jest to execute TypeScript test files
 
+   ---------------------------------------------------------------------------
 
+   chore(test): standardize test discovery
 
+   - Configured Jest to discover tests inside __tests__ directories
+   - Limited test execution to *.test.ts files
+   - Established consistent project testing structure
 
+   ---------------------------------------------------------------------------
 
+   chore(test): initialize global test setup
 
+   - Added setupFiles configuration
+   - Loaded shared test initialization before each test suite
+   - Centralized environment preparation
 
+   ---------------------------------------------------------------------------
 
+   chore(test): support path aliases
 
+   - Configured moduleNameMapper for "@/..." imports
+   - Matched project TypeScript path aliases
+   - Simplified imports throughout test files
 
-
-
-
-/*
-|--------------------------------------------------------------------------
-| File Functionality
-|--------------------------------------------------------------------------
-|
-| Purpose:
-| - Configures the Jest testing environment for the backend application.
-| - Defines how automated tests are discovered and executed.
-|
-| Responsibilities:
-| - Configures Jest to work with TypeScript using ts-jest.
-| - Sets the Node.js environment for backend testing.
-| - Specifies the location and naming pattern for test files.
-| - Executes tests sequentially to prevent database conflicts.
-| - Loads shared setup logic before running tests.
-| - Resolves project path aliases for consistent module imports.
-| - Exports the Jest configuration for use by the test runner.
-|
-*/
+============================================================================ */
