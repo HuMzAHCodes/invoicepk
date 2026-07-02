@@ -2,12 +2,13 @@
 import mongoose from 'mongoose';
 import dns from 'dns';
 
-// Fix for ISP-level DNS issues common in Pakistan (blocks MongoDB SRV lookups)
-dns.setServers(['8.8.8.8', '8.8.4.4']);
-
 let isConnected = false;
 
 export async function connectDB(): Promise<void> {
+  // Always set DNS servers before any connection attempt
+  // Fixes ISP-level SRV lookup blocking in Pakistan
+  dns.setServers(['8.8.8.8', '8.8.4.4']);
+
   if (isConnected) {
     console.log('[DB] Already connected — reusing connection');
     return;
@@ -40,28 +41,41 @@ export async function connectDB(): Promise<void> {
 
 
 
-/*
-|--------------------------------------------------------------------------
-| File Functionality
-|--------------------------------------------------------------------------
-|
-| Purpose:
-| - Establishes and manages the application's MongoDB database connection.
-| - Provides a shared database connection utility for backend modules.
-|
-| Responsibilities:
-| - Configures DNS servers to improve MongoDB Atlas connectivity in
-|   environments with SRV lookup issues.
-| - Connects to the MongoDB database using the configured environment
-|   variables.
-| - Reuses an existing database connection to avoid creating duplicate
-|   connections.
-| - Validates the presence of required database configuration.
-| - Logs connection status and propagates connection errors when necessary.
-| - Exports a reusable database connection helper for use throughout the
-|   application.
-|
-*/
+
+
+
+
+
+
+/* ============================================================================
+   COMMIT HISTORY
+   ============================================================================
+
+   fix(database): resolve MongoDB Atlas SRV lookup failures
+
+   - Moved DNS server configuration inside connectDB()
+   - Ensured DNS servers are configured before every connection attempt
+   - Fixed intermittent MongoDB Atlas connection failures caused by ISP DNS
+   - Improved compatibility for environments with restricted SRV resolution
+
+   ---------------------------------------------------------------------------
+
+   refactor(database): improve connection initialization flow
+
+   - Applied DNS configuration immediately before establishing connections
+   - Preserved existing connection reuse optimization
+   - Kept connection initialization centralized in connectDB()
+
+   ---------------------------------------------------------------------------
+
+   chore(logging): retain database connection diagnostics
+
+   - Continued logging successful database connections
+   - Preserved connection reuse logging
+   - Preserved configuration error logging
+   - Preserved connection failure logging for debugging
+
+============================================================================ */
 
 
 
@@ -78,21 +92,11 @@ export async function connectDB(): Promise<void> {
 
 
 
+// that commit related Description
 
-
-
-
-
-// Problem:
-// npx ts-node scripts/seed.ts threw ECONNREFUSED on querySrv for
-// _mongodb._tcp.cluster0.va87p1m.mongodb.net — Pakistan ISPs block
-// MongoDB's SRV DNS lookups by default.
-
-// Fix:
-// - lib/db.ts — added dns.setServers(['8.8.8.8', '8.8.4.4']) before
-//   mongoose.connect() to force Google DNS, bypassing ISP-level block
-// - scripts/seed.ts — added same dns.setServers() fix at the top of
-//   the script so the seed command connects successfully too
-
-// This fix was pre-documented in RISKS_AND_DECISIONS.md (Risk 2) as a
-// known issue from a previous project.
+// Previously used mongodb+srv:// SRV format which relies on DNS SRV
+// lookup. This worked for the seed script and Jest tests (main Node.js
+// process where dns.setServers() applies) but failed in Next.js 16
+// Turbopack API route workers which run in isolated processes and don't
+// inherit the DNS override. Switched to standard mongodb:// format with
+// hardcoded shard hostnames and port 27017 — bypasses DNS entirely.
