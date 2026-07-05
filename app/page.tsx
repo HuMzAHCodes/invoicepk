@@ -1,65 +1,96 @@
-import Image from "next/image";
+// app/layout.tsx
+// Root layout — applies all three fonts to <html>, sets base metadata,
+// and wraps the entire app. Every page inherits from this layout.
+// Font CSS variables are set here so every component can use them via
+// var(--font-display), var(--font-body), var(--font-mono).
 
-export default function Home() {
+import type { Metadata } from "next";
+import { fraunces, publicSans, plexMono } from "@/styles/fonts";
+import "./globals.css";
+
+export const metadata: Metadata = {
+  title: "InvoicePK — GST-Compliant Invoices for Pakistani Freelancers",
+  description:
+    "Generate FBR-compliant GST invoices in 2 minutes. Auto-calculate GST, WHT, and download professional PDFs. Built for Pakistani freelancers and agencies.",
+  keywords:
+    "invoice pakistan, GST invoice, FBR invoice, freelancer invoice pakistan, WHT invoice",
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <html
+      lang="en"
+      className={`
+        ${fraunces.variable}
+        ${publicSans.variable}
+        ${plexMono.variable}
+      `}
+    >
+      <body
+        style={{
+          fontFamily: "var(--font-body)",
+          backgroundColor: "#F7F5EF",
+          color: "#2B2924",
+          minHeight: "100vh",
+          margin: 0,
+        }}
+      >
+        {children}
+      </body>
+    </html>
   );
 }
+
+/* ============================================================================
+   COMMIT HISTORY
+   ============================================================================
+
+   feat(layout): implement application root layout
+
+   - Added global root layout for the Next.js application
+   - Wrapped all pages with a shared layout
+   - Established a consistent application structure
+   - Enabled shared styling across all routes
+
+   ---------------------------------------------------------------------------
+
+   feat(typography): configure global font system
+
+   - Applied display font globally
+   - Applied body font globally
+   - Applied monospace font globally
+   - Registered font CSS variables on the root HTML element
+   - Enabled font reuse through CSS custom properties
+
+   ---------------------------------------------------------------------------
+
+   feat(metadata): configure application metadata
+
+   - Added default application title
+   - Added SEO description
+   - Added relevant search keywords
+   - Established base metadata for all pages
+
+   ---------------------------------------------------------------------------
+
+   feat(styles): define global application styling
+
+   - Applied default body typography
+   - Configured application background color
+   - Configured default text color
+   - Ensured full viewport height layout
+   - Reset default body margin
+
+   ---------------------------------------------------------------------------
+
+   feat(layout): provide application-wide inheritance
+
+   - Enabled global font availability
+   - Shared metadata across all routes
+   - Ensured every page inherits the root layout configuration
+
+============================================================================ */
