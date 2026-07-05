@@ -1,78 +1,71 @@
 // app/api/auth/register/route.ts
 // POST /api/auth/register
-// Creates a new Firebase user and an empty Business document in MongoDB.
-// This is one of only two routes that does NOT use withAuth() middleware.
+// Called after Google Sign-In to ensure a Business document exists for the user.
+// If Business already exists (returning user) — returns existing profile.
+// If Business doesn't exist (new user) — creates one and returns it.
+// This route IS protected by withAuth() unlike the old email/password version.
 
 import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
-import admin from '@/lib/firebase-admin';
 import { connectDB } from '@/lib/db';
+import { withAuth } from '@/lib/withAuth';
+import { getBusinessForUser } from '@/lib/get-business';
+import { serializeBusiness } from '@/lib/serialize';
 import Business from '@/models/Business';
-
-const registerSchema = z.object({
-  email:    z.string().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-});
 
 export async function POST(req: NextRequest) {
   console.log('[POST /api/auth/register] Request received');
 
-  try {
-    // 1. Parse and validate body
-    const body = await req.json();
-    const parsed = registerSchema.safeParse(body);
+  return withAuth(req, async (req, uid) => {
+    try {
+      await connectDB();
 
-    if (!parsed.success) {
-      console.log(`[POST /api/auth/register] Validation failed: ${parsed.error.issues[0].message}`);
+      // Check if Business already exists for this user
+      let business = await getBusinessForUser(uid);
+
+      if (business) {
+        console.log(`[POST /api/auth/register] Business already exists | uid: ${uid}`);
+        return NextResponse.json({
+          data: {
+            user:     { id: uid },
+            business: serializeBusiness(business),
+            isNew:    false,
+          },
+        });
+      }
+
+      // Parse optional name from body
+      const body = await req.json().catch(() => ({}));
+      const displayName = body.displayName ?? uid;
+
+      // Create new Business document
+      business = await Business.create({
+        userId:         uid,
+        name:           displayName,
+        defaultGstRate: 17,
+        currency:       'PKR',
+      });
+
+      console.log(`[POST /api/auth/register] Business created | uid: ${uid} | businessId: ${business._id} | status: 201`);
+
       return NextResponse.json(
-        { error: { code: 'VALIDATION_ERROR', message: parsed.error.issues[0].message, status: 422 } },
-        { status: 422 }
-      );
-    }
-
-    const { email, password } = parsed.data;
-
-    // 2. Create Firebase user
-    const userRecord = await admin.auth().createUser({ email, password });
-    console.log(`[POST /api/auth/register] Firebase user created | uid: ${userRecord.uid}`);
-
-    // 3. Connect to DB and create empty Business document
-    await connectDB();
-
-    await Business.create({
-      userId:         userRecord.uid,
-      name:           email.split('@')[0],
-      defaultGstRate: 17,
-      currency:       'PKR',
-    });
-
-    console.log(`[POST /api/auth/register] Business document created | uid: ${userRecord.uid} | status: 201`);
-
-    return NextResponse.json(
-      {
-        data: {
-          user:    { id: userRecord.uid, email: userRecord.email },
-          message: 'Account created. Please verify your email.',
+        {
+          data: {
+            user:     { id: uid },
+            business: serializeBusiness(business),
+            isNew:    true,
+          },
         },
-      },
-      { status: 201 }
-    );
+        { status: 201 }
+      );
 
-  } catch (err: any) {
-    if (err.code === 'auth/email-already-exists') {
-      console.log(`[POST /api/auth/register] Email already exists`);
+    } catch (err) {
+      console.error('[POST /api/auth/register] ERROR:', err);
       return NextResponse.json(
-        { error: { code: 'VALIDATION_ERROR', message: 'An account with this email already exists.', status: 422 } },
-        { status: 422 }
+        { error: { code: 'SERVER_ERROR', message: 'Something went wrong.', status: 500 } },
+        { status: 500 }
       );
     }
-
-    console.error('[POST /api/auth/register] ERROR:', err);
-    return NextResponse.json(
-      { error: { code: 'SERVER_ERROR', message: 'Something went wrong.', status: 500 } },
-      { status: 500 }
-    );
-  }
+  });
 }
 
 
@@ -82,23 +75,77 @@ export async function POST(req: NextRequest) {
 
 /*
 |--------------------------------------------------------------------------
-| File Functionality
+| Functionality Summary
 |--------------------------------------------------------------------------
 |
+| Endpoint:
+|   POST /api/auth/register
+|
 | Purpose:
-| - Provides the API endpoint for registering new users.
-| - Creates a Firebase Authentication account and initializes the user's
-|   business profile within the application.
+|   Completes user registration after successful Google authentication by
+|   ensuring the authenticated user has an associated Business profile.
 |
-| Responsibilities:
-| - Validates incoming registration requests.
-| - Creates a new user account using Firebase Authentication.
-| - Establishes a connection to the database.
-| - Creates a default Business profile linked to the newly registered user.
-| - Returns the registered user's information along with a success message.
-| - Handles validation errors, duplicate email registrations, and unexpected
-|   server errors using standardized API responses.
-| - Serves as a public authentication endpoint and does not require prior
-|   user authentication.
+| Authentication:
+|   - Protected via withAuth().
+|   - Firebase ID token is validated before executing any business logic.
 |
+| Workflow:
+|   1. Receives an authenticated POST request.
+|   2. Connects to MongoDB.
+|   3. Searches for an existing Business document using the authenticated UID.
+|   4. If a Business already exists:
+|        • Returns the existing serialized business profile.
+|        • Marks the user as an existing user (isNew = false).
+|   5. If no Business exists:
+|        • Reads an optional displayName from the request body.
+|        • Falls back to the UID if no display name is provided.
+|        • Creates a new Business document with default values:
+|            - GST Rate: 17%
+|            - Currency: PKR
+|        • Returns the newly created business profile.
+|        • Marks the user as a new user (isNew = true).
+|
+| Response:
+|   Existing User (200):
+|     {
+|       data: {
+|         user,
+|         business,
+|         isNew: false
+|       }
+|     }
+|
+|   New User (201):
+|     {
+|       data: {
+|         user,
+|         business,
+|         isNew: true
+|       }
+|     }
+|
+| Error Handling:
+|   - Handles invalid/missing request body safely.
+|   - Catches unexpected server/database errors.
+|   - Returns a standardized SERVER_ERROR response (HTTP 500).
+|
+| Logging:
+|   - Logs incoming registration requests.
+|   - Logs whether an existing business was found.
+|   - Logs successful business creation with UID and Business ID.
+|   - Logs unexpected server errors for debugging.
+|
+| Dependencies:
+|   - connectDB()
+|   - withAuth()
+|   - getBusinessForUser()
+|   - serializeBusiness()
+|   - Business Model
+|
+|--------------------------------------------------------------------------
+| Git Commit
+|--------------------------------------------------------------------------
+| feat(auth): implement Google registration endpoint with automatic
+| business profile creation and existing user detection
+|--------------------------------------------------------------------------
 */

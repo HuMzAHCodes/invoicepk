@@ -1,17 +1,10 @@
 // styles/fonts.ts
-// Google Fonts setup via next/font/google — self-hosted automatically by Next.js.
-// Three-font system for InvoicePK:
-//   Fraunces   → display/headlines only
-//   Public Sans → all UI text (body, buttons, forms, nav)
-//   IBM Plex Mono → all numeric/currency values
-// Never use Inter, Poppins, Manrope, DM Sans, or Space Grotesk anywhere.
-
 import { Fraunces, Public_Sans, IBM_Plex_Mono } from 'next/font/google';
 
 export const fraunces = Fraunces({
   subsets:  ['latin'],
   axes:     ['opsz'],
-  weight:   ['600', '900'],
+  weight:   'variable',   // ← must be 'variable' when using axes
   variable: '--font-display',
   display:  'swap',
 });
