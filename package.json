@@ -12,6 +12,7 @@
   "dependencies": {
     "@react-pdf/renderer": "^4.5.1",
     "cloudinary": "^2.10.0",
+    "firebase": "^12.15.0",
     "firebase-admin": "^13.10.0",
     "mongoose": "^9.7.3",
     "next": "16.2.9",
