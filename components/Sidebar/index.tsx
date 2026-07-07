@@ -100,6 +100,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     gap: "2px",
     padding: collapsed ? "16px 8px" : "16px 12px",
     flex: 1,
+    paddingTop: "80px", // ← add this line
   };
 
   function getNavItemStyle(href: string): React.CSSProperties {
