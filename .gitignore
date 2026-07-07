@@ -43,3 +43,7 @@ next-env.d.ts
 
 
 .env.local
+InvoicePK_Frontend_Developer
+files
+FRONTEND_UI_SPEC
+LANDING_PAGE_SPEC
