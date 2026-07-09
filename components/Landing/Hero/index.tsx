@@ -155,16 +155,6 @@ const ctaSecondary: React.CSSProperties = {
   textDecoration: "none",
 };
 
-// Trust line — cream on dark bg
-const trustLine: React.CSSProperties = {
-  display: "flex",
-  gap: theme.spacing[4],
-  fontFamily: theme.fonts.body,
-  fontSize: theme.fontSizes.sm,
-  color: theme.colors.neutral[100],
-  marginBottom: theme.spacing[6],
-};
-
 // Number counter — white text
 const counterSection: React.CSSProperties = {
   fontFamily: theme.fonts.mono,
@@ -189,7 +179,6 @@ const responsiveCSS = `
     .hero-headline { font-size: 2.25rem !important; }
     .hero-sub { margin-left: auto; margin-right: auto; }
     .hero-cta { justify-content: center; }
-    .hero-trust { justify-content: center; }
     .hero-right { margin-top: 2rem; transform: scale(0.85); }
   }
   @media (max-width: 480px) {
@@ -246,29 +235,30 @@ export default function Hero() {
                 href="/login"
                 style={ctaPrimary}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.opacity = "0.9";
+                  e.currentTarget.style.opacity = "0.85";
+                  e.currentTarget.style.transform = "translateY(-1px)";
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.opacity = "1";
+                  e.currentTarget.style.transform = "translateY(0)";
                 }}
               >
                 Start for free
               </Link>
-              <a href="#how-it-works" style={ctaSecondary}>
+              <a
+                href="#how-it-works"
+                style={ctaSecondary}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.1)";
+                  e.currentTarget.style.transform = "translateY(-1px)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "transparent";
+                  e.currentTarget.style.transform = "translateY(0)";
+                }}
+              >
                 See how it works
               </a>
-            </motion.div>
-
-            <motion.div
-              className="hero-trust"
-              style={trustLine}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-            >
-              <span>✓ Free forever</span>
-              <span>✓ No credit card</span>
-              <span>✓ FBR-compliant</span>
             </motion.div>
 
             <motion.div
