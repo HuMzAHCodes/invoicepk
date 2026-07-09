@@ -18,4 +18,31 @@ Nice-to-have features and improvements that would enhance the user experience bu
 
 ---
 
+## 2. Pro Plan — Subscription & Payment Integration
+
+**Problem:** The landing page shows Free and Pro pricing tiers, but only the free tier is implemented. The "Start Pro" button just goes to `/login` with no actual upgrade path. The UpgradePrompt modal dismisses with "Got it" but doesn't let users upgrade.
+
+**Current state:**
+- Free tier: 5 invoices/month — enforced server-side (HTTP 429 when exceeded)
+- Pro tier: PKR 999/month — UI only, no backend logic
+- No payment provider (no Stripe, no JazzCash, no bank transfer)
+
+**Proposed implementation:**
+1. **Payment provider** — integrate Stripe or JazzCash for PKR payments
+2. **Subscription model** — add `plan: 'free' | 'pro'` and `planExpiresAt` to Business model
+3. **Server-side enforcement** — check plan status before invoice limit check
+4. **Upgrade flow** — clicking "Start Pro" → payment checkout → webhook updates plan
+5. **Billing portal** — let users view/manage subscription, cancel, update payment
+6. **Invoice for Pro** — generate receipt/invoice for the subscription itself
+
+**Where to implement:**
+- `models/Business.ts` — add `plan` and `planExpiresAt` fields
+- `app/api/subscription/` — new route for checkout, webhook, status
+- `components/UpgradePrompt/index.tsx` — link to actual checkout instead of dismiss
+- `components/Settings/` — add subscription management section
+
+**Priority:** High — monetization depends on this.
+
+---
+
 *Last updated: July 2026*

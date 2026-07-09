@@ -63,6 +63,14 @@ const linkItem: React.CSSProperties = {
   textDecoration: "none",
   display: "block",
   marginBottom: theme.spacing[2],
+  transition: theme.transitions.fast,
+};
+
+// Disabled link — unclickable
+const linkDisabled: React.CSSProperties = {
+  ...linkItem,
+  cursor: "default",
+  opacity: 0.5,
 };
 
 // Bottom bar
@@ -119,12 +127,12 @@ export default function Footer() {
           {/* Legal */}
           <div style={col}>
             <div style={colHeading}>Legal</div>
-            <a href="/terms" style={linkItem}>
+            <span style={linkDisabled}>
               Terms of Service
-            </a>
-            <a href="/privacy" style={linkItem}>
+            </span>
+            <span style={linkDisabled}>
               Privacy Policy
-            </a>
+            </span>
           </div>
         </div>
 

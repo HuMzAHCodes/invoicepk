@@ -17,6 +17,7 @@ const nav: React.CSSProperties = {
   top: 0,
   zIndex: 100,
   transition: "all 0.3s ease",
+  overflow: "hidden",
 };
 
 // Inner container — 3-column layout
@@ -91,6 +92,23 @@ const responsiveCSS = `
   }
 `;
 
+// Horizontal progress line — bottom of navbar
+const progressLineBg: React.CSSProperties = {
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  right: 0,
+  height: "3px",
+  backgroundColor: "transparent",
+};
+
+const progressLineFill: React.CSSProperties = {
+  height: "100%",
+  backgroundColor: theme.colors.primary[600],
+  transition: "width 0.15s ease",
+  borderRadius: "0 2px 2px 0",
+};
+
 // ─── Component ───
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -125,6 +143,7 @@ export default function Navbar() {
       <nav
         style={{
           ...nav,
+          position: "sticky",
           backgroundColor: scrolled ? "rgba(247, 245, 239, 0.85)" : theme.colors.neutral[50],
           backdropFilter: scrolled ? "blur(12px)" : "none",
           WebkitBackdropFilter: scrolled ? "blur(12px)" : "none",
@@ -156,6 +175,11 @@ export default function Navbar() {
           >
             <Menu size={24} />
           </button>
+        </div>
+
+        {/* Scroll progress line */}
+        <div style={progressLineBg}>
+          <div style={{ ...progressLineFill, width: `${scrollPercent}%` }} />
         </div>
       </nav>
 

@@ -213,7 +213,7 @@ export default function Pricing() {
   return (
     <>
       <style>{responsiveCSS}</style>
-      <section style={section}>
+      <section id="pricing" style={section}>
         <div style={container}>
           <motion.p
             style={label}
