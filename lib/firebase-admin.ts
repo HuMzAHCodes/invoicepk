@@ -15,12 +15,24 @@ function getAdmin() {
       : privateKeyRaw;
 
     if (!projectId || !clientEmail || !privateKey) {
+      console.error('[Firebase Admin] Missing env vars:', {
+        projectId: !!projectId,
+        clientEmail: !!clientEmail,
+        privateKeyLength: privateKey.length,
+      });
       throw new Error('Firebase Admin env vars missing. Check FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY.');
     }
 
-    admin.initializeApp({
-      credential: admin.credential.cert({ projectId, clientEmail, privateKey }),
-    });
+    try {
+      admin.initializeApp({
+        credential: admin.credential.cert({ projectId, clientEmail, privateKey }),
+      });
+    } catch (err) {
+      console.error('[Firebase Admin] Init failed:', err);
+      console.error('[Firebase Admin] Private key starts with:', privateKey.substring(0, 30));
+      console.error('[Firebase Admin] Private key ends with:', privateKey.substring(privateKey.length - 30));
+      throw err;
+    }
   }
   return admin;
 }
