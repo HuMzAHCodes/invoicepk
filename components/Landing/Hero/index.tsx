@@ -36,11 +36,54 @@ function formatPKR(n: number): string {
 
 // ─── Styles ───
 
-// Section wrapper
+// Gradient background wrapper
 const section: React.CSSProperties = {
-  backgroundColor: theme.colors.white,
+  position: "relative",
   padding: `${theme.spacing[16]} ${theme.spacing[4]}`,
   overflow: "hidden",
+  background: `linear-gradient(135deg, ${theme.colors.white} 0%, ${theme.colors.primary[50]} 50%, ${theme.colors.white} 100%)`,
+};
+
+// Decorative blurred circle top-left
+const circle1: React.CSSProperties = {
+  position: "absolute",
+  top: "-120px",
+  left: "-80px",
+  width: "400px",
+  height: "400px",
+  borderRadius: "50%",
+  background: `radial-gradient(circle, ${theme.colors.primary[200]} 0%, transparent 70%)`,
+  opacity: 0.5,
+  filter: "blur(40px)",
+  pointerEvents: "none",
+};
+
+// Decorative blurred circle bottom-right
+const circle2: React.CSSProperties = {
+  position: "absolute",
+  bottom: "-100px",
+  right: "-60px",
+  width: "350px",
+  height: "350px",
+  borderRadius: "50%",
+  background: `radial-gradient(circle, ${theme.colors.primary[50]} 0%, transparent 70%)`,
+  opacity: 0.6,
+  filter: "blur(40px)",
+  pointerEvents: "none",
+};
+
+// Decorative blurred circle center-right
+const circle3: React.CSSProperties = {
+  position: "absolute",
+  top: "30%",
+  right: "15%",
+  width: "200px",
+  height: "200px",
+  borderRadius: "50%",
+  background: `radial-gradient(circle, ${theme.colors.success[50]} 0%, transparent 70%)`,
+  opacity: 0.4,
+  filter: "blur(50px)",
+  pointerEvents: "none",
 };
 
 // Inner container
@@ -50,6 +93,8 @@ const container: React.CSSProperties = {
   display: "flex",
   alignItems: "center",
   gap: theme.spacing[12],
+  position: "relative",
+  zIndex: 1,
 };
 
 // Left text column
@@ -74,6 +119,11 @@ const headline: React.CSSProperties = {
   color: theme.colors.neutral[900],
   lineHeight: 1.1,
   marginBottom: theme.spacing[5],
+};
+
+// Green highlight for "2 minutes"
+const highlight: React.CSSProperties = {
+  color: theme.colors.primary[600],
 };
 
 // Subheadline
@@ -158,10 +208,11 @@ const responsiveCSS = `
     .hero-sub { margin-left: auto; margin-right: auto; }
     .hero-cta { justify-content: center; }
     .hero-trust { justify-content: center; }
-    .hero-right { margin-top: 2rem; }
+    .hero-right { margin-top: 2rem; transform: scale(0.85); }
   }
   @media (max-width: 480px) {
     .hero-headline { font-size: 1.875rem !important; }
+    .hero-right { display: none !important; }
   }
 `;
 
@@ -173,17 +224,22 @@ export default function Hero() {
     <>
       <style>{responsiveCSS}</style>
       <section style={section}>
+        {/* Decorative background circles */}
+        <div style={circle1} />
+        <div style={circle2} />
+        <div style={circle3} />
+
         <div className="hero-container" style={container}>
           <div className="hero-left" style={left}>
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
               <h1 className="hero-headline" style={headline}>
                 Generate GST invoices
                 <br />
-                in 2 minutes.
+                in <span style={highlight}>2 minutes.</span>
               </h1>
             </motion.div>
 
