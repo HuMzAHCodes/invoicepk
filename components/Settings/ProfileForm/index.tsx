@@ -5,6 +5,7 @@ import { Save } from "lucide-react";
 import { apiPut } from "@/lib/api-client";
 import theme from "@/styles/theme";
 import { BusinessData } from "../types";
+import { useToast } from "@/components/Toast";
 
 // ─── Props ───
 interface ProfileFormProps {
@@ -101,6 +102,12 @@ const textarea: React.CSSProperties = {
   minHeight: "60px",
 };
 
+// Mono font input for numeric values
+const monoInput: React.CSSProperties = {
+  ...input,
+  fontFamily: theme.fonts.mono,
+};
+
 // Save button
 const saveBtn: React.CSSProperties = {
   display: "flex",
@@ -146,6 +153,7 @@ const successBox: React.CSSProperties = {
 
 // ─── Component ───
 export default function ProfileForm({ business, onSaved }: ProfileFormProps) {
+  const { showToast } = useToast();
   const [name, setName] = useState(business.name);
   const [ntn, setNtn] = useState(business.ntn ?? "");
   const [strn, setStrn] = useState(business.strn ?? "");
@@ -173,8 +181,11 @@ export default function ProfileForm({ business, onSaved }: ProfileFormProps) {
       });
       onSaved(data);
       setSuccess("Profile updated successfully");
+      showToast("Profile updated successfully", "success");
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to save");
+      const msg = err instanceof Error ? err.message : "Failed to save";
+      setError(msg);
+      showToast(msg, "error");
     } finally {
       setSaving(false);
     }
@@ -245,7 +256,7 @@ export default function ProfileForm({ business, onSaved }: ProfileFormProps) {
             step={0.5}
             value={defaultGstRate}
             onChange={(e) => setDefaultGstRate(parseFloat(e.target.value) || 0)}
-            style={{ ...input, fontFamily: theme.fonts.mono }}
+            style={monoInput}
             onFocus={inputFocus}
             onBlur={inputBlur}
           />
