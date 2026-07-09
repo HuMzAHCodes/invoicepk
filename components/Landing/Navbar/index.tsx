@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Menu } from "lucide-react";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import theme from "@/styles/theme";
 import Logo from "./Logo";
 import CenterLinks from "./CenterLinks";
@@ -11,14 +11,12 @@ import MobileMenu from "./MobileMenu";
 
 // ─── Styles ───
 
-// Sticky navbar — neutral-50 background
+// Sticky navbar
 const nav: React.CSSProperties = {
   position: "sticky",
   top: 0,
   zIndex: 100,
-  backgroundColor: theme.colors.neutral[50],
-  borderBottom: `1px solid ${theme.colors.neutral[200]}`,
-  transition: "box-shadow 0.3s ease",
+  transition: "all 0.3s ease",
 };
 
 // Inner container — 3-column layout
@@ -60,6 +58,30 @@ const hamburger: React.CSSProperties = {
   padding: theme.spacing[1],
 };
 
+// Scroll progress circle — fixed bottom-right
+const progressWrap: React.CSSProperties = {
+  position: "fixed",
+  bottom: theme.spacing[6],
+  right: theme.spacing[6],
+  width: "48px",
+  height: "48px",
+  zIndex: 200,
+  cursor: "pointer",
+};
+
+// Progress text inside circle
+const progressText: React.CSSProperties = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  fontFamily: theme.fonts.mono,
+  fontSize: "0.6rem",
+  fontWeight: theme.fontWeights.bold,
+  color: theme.colors.primary[600],
+  pointerEvents: "none",
+};
+
 // ─── Responsive CSS ───
 const responsiveCSS = `
   @media (max-width: 768px) {
@@ -73,17 +95,43 @@ const responsiveCSS = `
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [scrollPercent, setScrollPercent] = useState(0);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 10);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 10);
+
+      // Calculate scroll percentage
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const percent = docHeight > 0 ? Math.round((window.scrollY / docHeight) * 100) : 0;
+      setScrollPercent(percent);
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // SVG circle values
+  const radius = 18;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (scrollPercent / 100) * circumference;
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <>
       <style>{responsiveCSS}</style>
-      <nav style={{ ...nav, boxShadow: scrolled ? "0 1px 3px rgba(0,0,0,0.06)" : "none" }}>
+      <nav
+        style={{
+          ...nav,
+          backgroundColor: scrolled ? "rgba(247, 245, 239, 0.85)" : theme.colors.neutral[50],
+          backdropFilter: scrolled ? "blur(12px)" : "none",
+          WebkitBackdropFilter: scrolled ? "blur(12px)" : "none",
+          borderBottom: `1px solid ${scrolled ? theme.colors.neutral[200] : "transparent"}`,
+          boxShadow: scrolled ? "0 1px 3px rgba(0,0,0,0.06)" : "none",
+        }}
+      >
         <div style={container}>
           {/* Left — Logo */}
           <div style={left}>
@@ -110,6 +158,36 @@ export default function Navbar() {
           </button>
         </div>
       </nav>
+
+      {/* Scroll progress circle */}
+      <div style={progressWrap} onClick={scrollToTop}>
+        <svg width="48" height="48" viewBox="0 0 48 48">
+          {/* Background circle */}
+          <circle
+            cx="24"
+            cy="24"
+            r={radius}
+            fill={theme.colors.white}
+            stroke={theme.colors.neutral[200]}
+            strokeWidth="3"
+          />
+          {/* Progress arc */}
+          <circle
+            cx="24"
+            cy="24"
+            r={radius}
+            fill="none"
+            stroke={theme.colors.primary[600]}
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeDasharray={circumference}
+            strokeDashoffset={offset}
+            transform="rotate(-90 24 24)"
+            style={{ transition: "stroke-dashoffset 0.15s ease" }}
+          />
+        </svg>
+        <span style={progressText}>{scrollPercent}%</span>
+      </div>
 
       <AnimatePresence>
         {mobileOpen && <MobileMenu onClose={() => setMobileOpen(false)} />}
