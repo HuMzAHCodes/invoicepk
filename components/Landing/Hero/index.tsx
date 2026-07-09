@@ -36,53 +36,35 @@ function formatPKR(n: number): string {
 
 // ─── Styles ───
 
-// Gradient background wrapper
+// Dark gradient background wrapper
 const section: React.CSSProperties = {
   position: "relative",
   padding: `${theme.spacing[16]} ${theme.spacing[4]}`,
   overflow: "hidden",
-  background: `linear-gradient(135deg, ${theme.colors.white} 0%, ${theme.colors.primary[50]} 50%, ${theme.colors.white} 100%)`,
+  background: `linear-gradient(160deg, ${theme.colors.primary[600]} 0%, ${theme.colors.primary[900]} 100%)`,
 };
 
-// Decorative blurred circle top-left
-const circle1: React.CSSProperties = {
+// Whitish glow — top-left corner
+const glowTopLeft: React.CSSProperties = {
   position: "absolute",
-  top: "-120px",
-  left: "-80px",
-  width: "400px",
-  height: "400px",
+  top: "-60px",
+  left: "-60px",
+  width: "300px",
+  height: "300px",
   borderRadius: "50%",
-  background: `radial-gradient(circle, ${theme.colors.primary[200]} 0%, transparent 70%)`,
-  opacity: 0.5,
-  filter: "blur(40px)",
+  background: "radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%)",
   pointerEvents: "none",
 };
 
-// Decorative blurred circle bottom-right
-const circle2: React.CSSProperties = {
+// Whitish glow — bottom-right corner
+const glowBottomRight: React.CSSProperties = {
   position: "absolute",
-  bottom: "-100px",
-  right: "-60px",
-  width: "350px",
-  height: "350px",
+  bottom: "-40px",
+  right: "-40px",
+  width: "250px",
+  height: "250px",
   borderRadius: "50%",
-  background: `radial-gradient(circle, ${theme.colors.primary[50]} 0%, transparent 70%)`,
-  opacity: 0.6,
-  filter: "blur(40px)",
-  pointerEvents: "none",
-};
-
-// Decorative blurred circle center-right
-const circle3: React.CSSProperties = {
-  position: "absolute",
-  top: "30%",
-  right: "15%",
-  width: "200px",
-  height: "200px",
-  borderRadius: "50%",
-  background: `radial-gradient(circle, ${theme.colors.success[50]} 0%, transparent 70%)`,
-  opacity: 0.4,
-  filter: "blur(50px)",
+  background: "radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%)",
   pointerEvents: "none",
 };
 
@@ -111,26 +93,26 @@ const right: React.CSSProperties = {
   minWidth: 0,
 };
 
-// Main headline
+// Main headline — white text
 const headline: React.CSSProperties = {
   fontFamily: theme.fonts.display,
   fontSize: "3.75rem",
   fontWeight: theme.fontWeights.black,
-  color: theme.colors.neutral[900],
+  color: theme.colors.white,
   lineHeight: 1.1,
   marginBottom: theme.spacing[5],
 };
 
-// Green highlight for "2 minutes"
+// Highlight — light green tint for "2 minutes"
 const highlight: React.CSSProperties = {
-  color: theme.colors.primary[600],
+  color: theme.colors.primary[50],
 };
 
-// Subheadline
+// Subheadline — cream/off-white on dark bg
 const subheadline: React.CSSProperties = {
   fontFamily: theme.fonts.body,
   fontSize: theme.fontSizes.lg,
-  color: theme.colors.neutral[600],
+  color: theme.colors.neutral[100],
   lineHeight: 1.6,
   maxWidth: "480px",
   marginBottom: theme.spacing[6],
@@ -143,13 +125,13 @@ const ctaRow: React.CSSProperties = {
   marginBottom: theme.spacing[5],
 };
 
-// Primary CTA button
+// Primary CTA — dark bg, white text
 const ctaPrimary: React.CSSProperties = {
   fontFamily: theme.fonts.body,
   fontSize: theme.fontSizes.base,
   fontWeight: theme.fontWeights.semibold,
   color: theme.colors.white,
-  backgroundColor: theme.colors.primary[600],
+  backgroundColor: theme.colors.primary[900],
   padding: `${theme.spacing[3]} ${theme.spacing[6]}`,
   borderRadius: theme.radius.md,
   border: "none",
@@ -158,45 +140,45 @@ const ctaPrimary: React.CSSProperties = {
   textDecoration: "none",
 };
 
-// Secondary CTA button
+// Secondary CTA — transparent, ivory border
 const ctaSecondary: React.CSSProperties = {
   fontFamily: theme.fonts.body,
   fontSize: theme.fontSizes.base,
   fontWeight: theme.fontWeights.medium,
-  color: theme.colors.primary[600],
+  color: theme.colors.neutral[50],
   backgroundColor: "transparent",
   padding: `${theme.spacing[3]} ${theme.spacing[6]}`,
   borderRadius: theme.radius.md,
-  border: `1px solid ${theme.colors.primary[600]}`,
+  border: `1px solid ${theme.colors.neutral[100]}`,
   cursor: "pointer",
   transition: theme.transitions.fast,
   textDecoration: "none",
 };
 
-// Trust line container
+// Trust line — cream on dark bg
 const trustLine: React.CSSProperties = {
   display: "flex",
   gap: theme.spacing[4],
   fontFamily: theme.fonts.body,
   fontSize: theme.fontSizes.sm,
-  color: theme.colors.neutral[400],
+  color: theme.colors.neutral[100],
   marginBottom: theme.spacing[6],
 };
 
-// Number counter section
+// Number counter — white text
 const counterSection: React.CSSProperties = {
   fontFamily: theme.fonts.mono,
   fontSize: theme.fontSizes["2xl"],
   fontWeight: theme.fontWeights.bold,
-  color: theme.colors.primary[600],
+  color: theme.colors.white,
 };
 
-// Counter label
+// Counter label — cream
 const counterLabel: React.CSSProperties = {
   fontFamily: theme.fonts.body,
   fontSize: theme.fontSizes.xs,
   fontWeight: theme.fontWeights.regular,
-  color: theme.colors.neutral[400],
+  color: theme.colors.neutral[100],
   marginTop: theme.spacing[1],
 };
 
@@ -224,10 +206,9 @@ export default function Hero() {
     <>
       <style>{responsiveCSS}</style>
       <section style={section}>
-        {/* Decorative background circles */}
-        <div style={circle1} />
-        <div style={circle2} />
-        <div style={circle3} />
+        {/* Corner glows */}
+        <div style={glowTopLeft} />
+        <div style={glowBottomRight} />
 
         <div className="hero-container" style={container}>
           <div className="hero-left" style={left}>
