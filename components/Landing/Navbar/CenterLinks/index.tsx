@@ -12,18 +12,96 @@ const container: React.CSSProperties = {
   gap: theme.spacing[8],
 };
 
-// Individual nav link
-const link: React.CSSProperties = {
-  fontFamily: theme.fonts.body,
-  fontSize: theme.fontSizes.sm,
-  fontWeight: theme.fontWeights.medium,
-  color: theme.colors.neutral[600],
-  textDecoration: "none",
-  transition: theme.transitions.fast,
-  cursor: "pointer",
-  paddingBottom: "2px",
-  borderBottom: "2px solid transparent",
-};
+// ─── CSS Animation ───
+const hoverCSS = `
+  .nav-link {
+    position: relative;
+    font-family: ${theme.fonts.body};
+    font-size: ${theme.fontSizes.sm};
+    font-weight: ${theme.fontWeights.medium};
+    color: ${theme.colors.neutral[600]};
+    text-decoration: none;
+    cursor: pointer;
+    padding: 6px 12px;
+    transition: color 0.2s ease;
+    z-index: 1;
+  }
+
+  .nav-link::before,
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    border: 1.5px solid ${theme.colors.primary[600]};
+    border-radius: ${theme.radius.md};
+    transition: none;
+    pointer-events: none;
+  }
+
+  /* Bottom border — appears first */
+  .nav-link::before {
+    bottom: 0; left: 50%; right: 50%; height: 0;
+  }
+  /* Top border — appears second */
+  .nav-link::after {
+    top: 0; left: 50%; right: 50%; height: 0;
+  }
+
+  .nav-link-expand {
+    position: absolute;
+    inset: 0;
+    border-left: 1.5px solid ${theme.colors.primary[600]};
+    border-right: 1.5px solid ${theme.colors.primary[600]};
+    border-radius: ${theme.radius.md};
+    border-top: none; border-bottom: none;
+    pointer-events: none;
+  }
+
+  .nav-link:hover {
+    color: ${theme.colors.primary[600]};
+  }
+
+  /* Bottom line expands outward */
+  .nav-link:hover::before {
+    left: 0; right: 0;
+    transition: left 0.15s ease 0s, right 0.15s ease 0s;
+  }
+
+  /* Sides appear */
+  .nav-link:hover .nav-link-expand {
+    opacity: 1;
+    transition: opacity 0s ease 0.15s;
+  }
+
+  /* Top line closes the box */
+  .nav-link:hover::after {
+    left: 0; right: 0;
+    transition: left 0.1s ease 0.15s, right 0.1s ease 0.15s;
+  }
+
+  /* ─── Reverse on leave ─── */
+
+  /* Top line disappears first */
+  .nav-link:not(:hover)::after {
+    left: 50%; right: 50%;
+    transition: left 0.1s ease 0s, right 0.1s ease 0s;
+  }
+
+  /* Sides disappear */
+  .nav-link:not(:hover) .nav-link-expand {
+    opacity: 0;
+    transition: opacity 0s ease 0.1s;
+  }
+
+  /* Bottom line disappears last */
+  .nav-link:not(:hover)::before {
+    left: 50%; right: 50%;
+    transition: left 0.15s ease 0.1s, right 0.15s ease 0.1s;
+  }
+
+  .nav-link:not(:hover) {
+    color: ${theme.colors.neutral[600]};
+  }
+`;
 
 // ─── Data ───
 const links = [
@@ -35,42 +113,23 @@ const links = [
 // ─── Component ───
 export default function CenterLinks() {
   return (
-    <div style={container}>
-      {links.map((l) =>
-        l.isAnchor ? (
-          <a
-            key={l.label}
-            href={l.href}
-            style={link}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = theme.colors.primary[600];
-              e.currentTarget.style.borderBottomColor = theme.colors.primary[600];
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = theme.colors.neutral[600];
-              e.currentTarget.style.borderBottomColor = "transparent";
-            }}
-          >
-            {l.label}
-          </a>
-        ) : (
-          <Link
-            key={l.label}
-            href={l.href}
-            style={link}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = theme.colors.primary[600];
-              e.currentTarget.style.borderBottomColor = theme.colors.primary[600];
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = theme.colors.neutral[600];
-              e.currentTarget.style.borderBottomColor = "transparent";
-            }}
-          >
-            {l.label}
-          </Link>
-        )
-      )}
-    </div>
+    <>
+      <style>{hoverCSS}</style>
+      <div style={container}>
+        {links.map((l) =>
+          l.isAnchor ? (
+            <a key={l.label} href={l.href} className="nav-link">
+              {l.label}
+              <span className="nav-link-expand" />
+            </a>
+          ) : (
+            <Link key={l.label} href={l.href} className="nav-link">
+              {l.label}
+              <span className="nav-link-expand" />
+            </Link>
+          )
+        )}
+      </div>
+    </>
   );
 }
