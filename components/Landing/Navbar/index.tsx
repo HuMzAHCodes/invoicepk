@@ -5,38 +5,23 @@ import { Menu } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
 import theme from "@/styles/theme";
 import Logo from "./Logo";
+import CenterLinks from "./CenterLinks";
 import DesktopLinks from "./DesktopLinks";
 import MobileMenu from "./MobileMenu";
 
 // ─── Styles ───
 
-// Sticky navbar wrapper — no shadow initially
-const navBase: React.CSSProperties = {
+// Sticky navbar — neutral-50 background
+const nav: React.CSSProperties = {
   position: "sticky",
   top: 0,
   zIndex: 100,
-  transition: "all 0.3s ease",
-};
-
-// Transparent state (top of page)
-const navTransparent: React.CSSProperties = {
-  ...navBase,
-  backgroundColor: "transparent",
-  borderBottom: "1px solid transparent",
-  backdropFilter: "none",
-};
-
-// Scrolled state — blur + shadow
-const navScrolled: React.CSSProperties = {
-  ...navBase,
-  backgroundColor: "rgba(255, 255, 255, 0.85)",
+  backgroundColor: theme.colors.neutral[50],
   borderBottom: `1px solid ${theme.colors.neutral[200]}`,
-  backdropFilter: "blur(12px)",
-  WebkitBackdropFilter: "blur(12px)",
-  boxShadow: "0 1px 3px rgba(0, 0, 0, 0.06)",
+  transition: "box-shadow 0.3s ease",
 };
 
-// Inner container
+// Inner container — 3-column layout
 const container: React.CSSProperties = {
   maxWidth: "1200px",
   margin: "0 auto",
@@ -44,6 +29,25 @@ const container: React.CSSProperties = {
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
+};
+
+// Left section — logo
+const left: React.CSSProperties = {
+  flex: "0 0 auto",
+};
+
+// Center section — nav links
+const center: React.CSSProperties = {
+  flex: 1,
+  display: "flex",
+  justifyContent: "center",
+};
+
+// Right section — auth buttons
+const right: React.CSSProperties = {
+  flex: "0 0 auto",
+  display: "flex",
+  alignItems: "center",
 };
 
 // Hamburger button (mobile)
@@ -59,6 +63,7 @@ const hamburger: React.CSSProperties = {
 // ─── Responsive CSS ───
 const responsiveCSS = `
   @media (max-width: 768px) {
+    .landing-center-links { display: none !important; }
     .landing-desktop-links { display: none !important; }
     .landing-hamburger { display: flex !important; }
   }
@@ -78,12 +83,24 @@ export default function Navbar() {
   return (
     <>
       <style>{responsiveCSS}</style>
-      <nav style={scrolled ? navScrolled : navTransparent}>
+      <nav style={{ ...nav, boxShadow: scrolled ? "0 1px 3px rgba(0,0,0,0.06)" : "none" }}>
         <div style={container}>
-          <Logo />
-          <div className="landing-desktop-links">
+          {/* Left — Logo */}
+          <div style={left}>
+            <Logo />
+          </div>
+
+          {/* Center — Nav links */}
+          <div className="landing-center-links" style={center}>
+            <CenterLinks />
+          </div>
+
+          {/* Right — Auth */}
+          <div className="landing-desktop-links" style={right}>
             <DesktopLinks />
           </div>
+
+          {/* Mobile hamburger */}
           <button
             className="landing-hamburger"
             style={hamburger}
