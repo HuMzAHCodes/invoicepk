@@ -9,7 +9,9 @@ function getAdmin() {
   if (!admin.apps.length) {
     const projectId   = process.env.FIREBASE_PROJECT_ID;
     const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
-    const privateKeyRaw = process.env.FIREBASE_PRIVATE_KEY ?? '';
+    const privateKeyRaw = process.env.FIREBASE_PRIVATE_KEY_B64
+      ? Buffer.from(process.env.FIREBASE_PRIVATE_KEY_B64, 'base64').toString('utf-8')
+      : process.env.FIREBASE_PRIVATE_KEY ?? '';
     const privateKey = privateKeyRaw.includes('\\n')
       ? privateKeyRaw.replace(/\\n/g, '\n')
       : privateKeyRaw;
