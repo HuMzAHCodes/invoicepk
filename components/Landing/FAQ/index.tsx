@@ -41,33 +41,36 @@ const heading: React.CSSProperties = {
   marginBottom: theme.spacing[10],
 };
 
-// Question row
+// Question row — base
 const questionRow: React.CSSProperties = {
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
   width: "100%",
-  padding: `${theme.spacing[4]} 0`,
+  padding: `${theme.spacing[4]} ${theme.spacing[4]}`,
   background: "none",
   border: "none",
   borderBottom: `1px solid ${theme.colors.neutral[200]}`,
   cursor: "pointer",
   textAlign: "left" as const,
+  borderRadius: theme.radius.md,
+  transition: "all 0.2s ease",
 };
 
-// Question text
+// Question text — base
 const questionText: React.CSSProperties = {
   fontFamily: theme.fonts.body,
   fontSize: theme.fontSizes.base,
   fontWeight: theme.fontWeights.semibold,
   color: theme.colors.neutral[900],
+  transition: "color 0.2s ease",
 };
 
-// Chevron icon wrapper
+// Chevron icon wrapper — base
 const chevron: React.CSSProperties = {
   flexShrink: 0,
   color: theme.colors.neutral[400],
-  transition: "transform 0.2s ease",
+  transition: "transform 0.2s ease, color 0.2s ease",
 };
 
 // Answer wrapper
@@ -82,7 +85,7 @@ const answerText: React.CSSProperties = {
   color: theme.colors.neutral[600],
   lineHeight: 1.7,
   textAlign: "left" as const,
-  paddingBottom: theme.spacing[4],
+  padding: `${theme.spacing[2]} ${theme.spacing[4]} ${theme.spacing[4]}`,
 };
 
 // ─── Data ───
@@ -112,6 +115,7 @@ const faqs = [
 // ─── Component ───
 export default function FAQ() {
   const [open, setOpen] = useState<number | null>(null);
+  const [hovered, setHovered] = useState<number | null>(null);
 
   return (
     <section style={section}>
@@ -136,43 +140,64 @@ export default function FAQ() {
           Frequently asked questions
         </motion.h2>
 
-        {faqs.map((faq, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.3, delay: 0.1 + i * 0.06 }}
-          >
-            <button
-              style={questionRow}
-              onClick={() => setOpen(open === i ? null : i)}
-            >
-              <span style={questionText}>{faq.q}</span>
-              <motion.span
-                style={chevron}
-                animate={{ rotate: open === i ? 180 : 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <FiChevronDown size={20} />
-              </motion.span>
-            </button>
+        {faqs.map((faq, i) => {
+          const isOpen = open === i;
+          const isHovered = hovered === i;
 
-            <AnimatePresence>
-              {open === i && (
-                <motion.div
-                  style={answerWrapper}
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.25 }}
+          return (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.3, delay: 0.1 + i * 0.06 }}
+            >
+              <button
+                style={{
+                  ...questionRow,
+                  backgroundColor: isHovered ? theme.colors.primary[50] : "transparent",
+                  paddingLeft: isHovered ? theme.spacing[5] : theme.spacing[4],
+                }}
+                onClick={() => setOpen(isOpen ? null : i)}
+                onMouseEnter={() => setHovered(i)}
+                onMouseLeave={() => setHovered(null)}
+              >
+                <span
+                  style={{
+                    ...questionText,
+                    color: isHovered ? theme.colors.primary[600] : theme.colors.neutral[900],
+                  }}
                 >
-                  <div style={answerText}>{faq.a}</div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
-        ))}
+                  {faq.q}
+                </span>
+                <motion.span
+                  style={{
+                    ...chevron,
+                    color: isHovered ? theme.colors.primary[600] : theme.colors.neutral[400],
+                  }}
+                  animate={{ rotate: isOpen ? 180 : 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <FiChevronDown size={20} />
+                </motion.span>
+              </button>
+
+              <AnimatePresence>
+                {isOpen && (
+                  <motion.div
+                    style={answerWrapper}
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.25 }}
+                  >
+                    <div style={answerText}>{faq.a}</div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          );
+        })}
       </div>
     </section>
   );
