@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { apiGet, apiPatch, apiDelete, apiDownloadPDF } from "@/lib/api-client";
 import theme from "@/styles/theme";
+import { useToast } from "@/components/Toast";
 import InvoiceInfo from "./InvoiceInfo";
 import LineItemsTable from "./LineItemsTable";
 import GSTSummary from "./GSTSummary";
@@ -86,11 +87,47 @@ const noteText: React.CSSProperties = {
   whiteSpace: "pre-wrap",
 };
 
+// Actions right side button group
+const actionsRight: React.CSSProperties = {
+  display: "flex",
+  gap: theme.spacing[3],
+};
+
+// Download PDF button base
+const pdfBtn: React.CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  gap: theme.spacing[2],
+  padding: `${theme.spacing[3]} ${theme.spacing[5]}`,
+  backgroundColor: theme.colors.white,
+  color: theme.colors.primary[600],
+  border: `1px solid ${theme.colors.primary[200]}`,
+  borderRadius: theme.radius.md,
+  fontFamily: theme.fonts.body,
+  fontSize: theme.fontSizes.sm,
+  fontWeight: theme.fontWeights.medium,
+  cursor: "pointer",
+  transition: theme.transitions.fast,
+};
+
+// Download PDF button when loading
+const pdfBtnDisabled: React.CSSProperties = {
+  ...pdfBtn,
+  cursor: "not-allowed",
+  opacity: 0.5,
+};
+
+// Section spacing wrapper
+const section: React.CSSProperties = {
+  marginTop: theme.spacing[4],
+};
+
 // ─── Component ───
 export default function InvoiceDetail() {
   const router = useRouter();
   const params = useParams();
   const id = params?.id as string;
+  const { showToast } = useToast();
 
   const [invoice, setInvoice] = useState<InvoiceData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -129,8 +166,12 @@ export default function InvoiceDetail() {
           : prev,
       );
       setMessage(`Invoice marked as ${newStatus}`);
+      showToast(`Invoice marked as ${newStatus}`, "success");
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to update status");
+      const msg =
+        err instanceof Error ? err.message : "Failed to update status";
+      setError(msg);
+      showToast(msg, "error");
     } finally {
       setStatusLoading(false);
     }
@@ -142,9 +183,13 @@ export default function InvoiceDetail() {
     setError("");
     try {
       await apiDelete(`/invoices/${id}`);
+      showToast("Invoice deleted", "success");
       router.push("/invoices");
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to delete invoice");
+      const msg =
+        err instanceof Error ? err.message : "Failed to delete invoice";
+      setError(msg);
+      showToast(msg, "error");
       setDeleteLoading(false);
     }
   }
@@ -156,7 +201,9 @@ export default function InvoiceDetail() {
     try {
       await apiDownloadPDF(id, `${invoice.invoiceNumber}.pdf`);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to download PDF");
+      const msg = err instanceof Error ? err.message : "Failed to download PDF";
+      setError(msg);
+      showToast(msg, "error");
     } finally {
       setPdfLoading(false);
     }
@@ -179,24 +226,9 @@ export default function InvoiceDetail() {
           onTransition={handleTransition}
           loading={statusLoading}
         />
-        <div style={{ display: "flex", gap: theme.spacing[3] }}>
+        <div style={actionsRight}>
           <button
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: theme.spacing[2],
-              padding: `${theme.spacing[3]} ${theme.spacing[5]}`,
-              backgroundColor: theme.colors.white,
-              color: theme.colors.primary[600],
-              border: `1px solid ${theme.colors.primary[200]}`,
-              borderRadius: theme.radius.md,
-              fontFamily: theme.fonts.body,
-              fontSize: theme.fontSizes.sm,
-              fontWeight: theme.fontWeights.medium,
-              cursor: pdfLoading ? "not-allowed" : "pointer",
-              opacity: pdfLoading ? 0.5 : 1,
-              transition: theme.transitions.fast,
-            }}
+            style={pdfLoading ? pdfBtnDisabled : pdfBtn}
             disabled={pdfLoading}
             onClick={handleDownloadPDF}
             onMouseEnter={(e) => {
@@ -220,10 +252,10 @@ export default function InvoiceDetail() {
       {invoice && (
         <>
           <InvoiceInfo invoice={invoice} />
-          <div style={{ marginTop: theme.spacing[4] }}>
+          <div style={section}>
             <LineItemsTable items={invoice.items} currency={invoice.currency} />
           </div>
-          <div style={{ marginTop: theme.spacing[4] }}>
+          <div style={section}>
             <GSTSummary
               gstType={invoice.gstType}
               gstRate={invoice.gstRate}
@@ -238,7 +270,7 @@ export default function InvoiceDetail() {
             />
           </div>
           {invoice.notes && (
-            <div style={{ marginTop: theme.spacing[4] }}>
+            <div style={section}>
               <div style={noteCard}>
                 <div style={noteLabel}>Notes</div>
                 <div style={noteText}>{invoice.notes}</div>
@@ -265,8 +297,8 @@ export default function InvoiceDetail() {
 //   before permanently removing the invoice.
 // • Provides PDF export functionality by downloading a professionally generated
 //   invoice document from the backend.
-// • Displays contextual success and error notifications for status updates,
-//   deletion, PDF download failures, and data loading operations.
+// • Displays contextual success and error notifications via toast for status
+//   updates, deletion, and PDF download operations.
 // • Coordinates multiple reusable UI components to keep presentation logic
 //   modular while centralizing business interactions within a single container.
 // • Applies the centralized theme system to maintain consistent layout,
