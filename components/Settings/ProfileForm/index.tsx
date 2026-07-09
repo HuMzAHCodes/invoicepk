@@ -163,7 +163,7 @@ export default function ProfileForm({ business, onSaved }: ProfileFormProps) {
     setSaving(true);
 
     try {
-      const data = await apiPut<{ data: BusinessData }>("/business", {
+      const data = await apiPut<BusinessData>("/business", {
         name,
         ntn: ntn || undefined,
         strn: strn || undefined,
@@ -171,7 +171,7 @@ export default function ProfileForm({ business, onSaved }: ProfileFormProps) {
         defaultGstRate,
         currency,
       });
-      onSaved(data.data);
+      onSaved(data);
       setSuccess("Profile updated successfully");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Failed to save");
