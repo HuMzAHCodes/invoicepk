@@ -4,7 +4,7 @@
 // Every route except POST /api/auth/register and POST /api/auth/login uses this.
 
 import { NextRequest, NextResponse } from 'next/server';
-import admin from '@/lib/firebase-admin';
+import getAdmin from '@/lib/firebase-admin';
 
 type AuthenticatedHandler = (
   req: NextRequest,
@@ -28,7 +28,7 @@ export async function withAuth(
 
     const token = authHeader.split('Bearer ')[1];
 
-    const decoded = await admin.auth().verifyIdToken(token);
+    const decoded = await getAdmin().auth().verifyIdToken(token);
     const uid = decoded.uid;
 
     console.log(`[withAuth] Token verified | uid: ${uid}`);

@@ -5,19 +5,24 @@
 
 import admin from 'firebase-admin';
 
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert({
-      projectId:    process.env.FIREBASE_PROJECT_ID,
-      clientEmail:  process.env.FIREBASE_CLIENT_EMAIL,
-      // The private key comes from .env.local as a single line with literal \n
-      // .replace() converts those literal \n back into real newlines
-      privateKey:   process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-    }),
-  });
+function getAdmin() {
+  if (!admin.apps.length) {
+    const projectId   = process.env.FIREBASE_PROJECT_ID;
+    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+    const privateKey  = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+
+    if (!projectId || !clientEmail || !privateKey) {
+      throw new Error('Firebase Admin env vars missing. Check FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY.');
+    }
+
+    admin.initializeApp({
+      credential: admin.credential.cert({ projectId, clientEmail, privateKey }),
+    });
+  }
+  return admin;
 }
 
-export default admin;
+export default getAdmin;
 
 
 /*
