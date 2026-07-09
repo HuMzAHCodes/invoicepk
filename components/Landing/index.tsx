@@ -3,6 +3,7 @@ import Hero from "./Hero";
 import HowItWorks from "./HowItWorks";
 import BuiltForPakistan from "./BuiltForPakistan";
 import Pricing from "./Pricing";
+import FAQ from "./FAQ";
 
 export default function Landing() {
   return (
@@ -12,6 +13,7 @@ export default function Landing() {
       <HowItWorks />
       <BuiltForPakistan />
       <Pricing />
+      <FAQ />
     </>
   );
 }
