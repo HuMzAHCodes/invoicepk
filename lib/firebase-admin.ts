@@ -9,7 +9,10 @@ function getAdmin() {
   if (!admin.apps.length) {
     const projectId   = process.env.FIREBASE_PROJECT_ID;
     const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
-    const privateKey  = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+    const privateKeyRaw = process.env.FIREBASE_PRIVATE_KEY ?? '';
+    const privateKey = privateKeyRaw.includes('\\n')
+      ? privateKeyRaw.replace(/\\n/g, '\n')
+      : privateKeyRaw;
 
     if (!projectId || !clientEmail || !privateKey) {
       throw new Error('Firebase Admin env vars missing. Check FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY.');
