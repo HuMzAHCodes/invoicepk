@@ -6,9 +6,9 @@ import theme from "@/styles/theme";
 
 // ─── Styles ───
 
-// Dark gradient background — matches hero vibe
+// Section wrapper — neutral-50 background
 const section: React.CSSProperties = {
-  background: `linear-gradient(160deg, ${theme.colors.primary[600]} 0%, ${theme.colors.primary[900]} 100%)`,
+  backgroundColor: theme.colors.surface,
   padding: `${theme.spacing[16]} ${theme.spacing[4]}`,
 };
 
@@ -24,18 +24,18 @@ const label: React.CSSProperties = {
   fontFamily: theme.fonts.body,
   fontSize: theme.fontSizes.xs,
   fontWeight: theme.fontWeights.semibold,
-  color: theme.colors.primary[200],
+  color: theme.colors.primary[400],
   letterSpacing: "0.1em",
   textTransform: "uppercase" as const,
   marginBottom: theme.spacing[3],
 };
 
-// Main heading — white
+// Main heading — dark
 const heading: React.CSSProperties = {
   fontFamily: theme.fonts.display,
   fontSize: "2.25rem",
   fontWeight: theme.fontWeights.semibold,
-  color: theme.colors.white,
+  color: theme.colors.neutral[900],
   lineHeight: 1.2,
   marginBottom: theme.spacing[12],
 };
@@ -47,19 +47,18 @@ const cardsRow: React.CSSProperties = {
   justifyContent: "center",
 };
 
-// Glass card
+// Glass card — light bg with green tint
 const card: React.CSSProperties = {
   flex: 1,
   maxWidth: "280px",
   padding: `${theme.spacing[8]} ${theme.spacing[6]}`,
   borderRadius: "16px",
-  background: "linear-gradient(160deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.03) 100%)",
-  border: "1px solid rgba(255,255,255,0.12)",
-  backdropFilter: "blur(12px)",
-  WebkitBackdropFilter: "blur(12px)",
+  background: `linear-gradient(160deg, ${theme.colors.primary[50]} 0%, ${theme.colors.white} 100%)`,
+  border: `1px solid ${theme.colors.primary[200]}`,
   textAlign: "center" as const,
   position: "relative" as const,
   overflow: "hidden" as const,
+  boxShadow: theme.shadows.md,
 };
 
 // Green glow inside card — top center
@@ -71,28 +70,28 @@ const cardGlow: React.CSSProperties = {
   width: "120px",
   height: "120px",
   borderRadius: "50%",
-  background: `radial-gradient(circle, ${theme.colors.primary[400]}30 0%, transparent 70%)`,
+  background: `radial-gradient(circle, ${theme.colors.primary[200]}60 0%, transparent 70%)`,
   pointerEvents: "none",
 };
 
-// Step number — large green
+// Step number — dark green
 const stepNum: React.CSSProperties = {
   fontFamily: theme.fonts.mono,
   fontSize: "2.5rem",
   fontWeight: theme.fontWeights.bold,
-  color: theme.colors.primary[200],
+  color: theme.colors.primary[600],
   marginBottom: theme.spacing[4],
   position: "relative",
   zIndex: 1,
 };
 
-// Icon circle — glass
+// Icon circle — light glass
 const iconCircle: React.CSSProperties = {
   width: "56px",
   height: "56px",
   borderRadius: "50%",
-  backgroundColor: "rgba(255,255,255,0.1)",
-  border: "1px solid rgba(255,255,255,0.15)",
+  backgroundColor: theme.colors.primary[50],
+  border: `1px solid ${theme.colors.primary[200]}`,
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
@@ -101,22 +100,22 @@ const iconCircle: React.CSSProperties = {
   zIndex: 1,
 };
 
-// Step title — white
+// Step title — dark
 const stepTitle: React.CSSProperties = {
   fontFamily: theme.fonts.body,
   fontSize: theme.fontSizes.base,
   fontWeight: theme.fontWeights.semibold,
-  color: theme.colors.white,
+  color: theme.colors.neutral[900],
   marginBottom: theme.spacing[2],
   position: "relative",
   zIndex: 1,
 };
 
-// Step description — cream
+// Step description — grey
 const stepDesc: React.CSSProperties = {
   fontFamily: theme.fonts.body,
   fontSize: theme.fontSizes.sm,
-  color: theme.colors.neutral[100],
+  color: theme.colors.neutral[600],
   lineHeight: 1.6,
   position: "relative",
   zIndex: 1,
@@ -126,19 +125,19 @@ const stepDesc: React.CSSProperties = {
 const steps = [
   {
     num: "01",
-    icon: <FiFileText size={24} color={theme.colors.primary[200]} />,
+    icon: <FiFileText size={24} color={theme.colors.primary[600]} />,
     title: "Fill your invoice",
     desc: "Add client, line items, GST type — done in minutes.",
   },
   {
     num: "02",
-    icon: <FiHash size={24} color={theme.colors.primary[200]} />,
+    icon: <FiHash size={24} color={theme.colors.primary[600]} />,
     title: "GST auto-calculated",
     desc: "WHT, zero-rated, standard — all handled automatically.",
   },
   {
     num: "03",
-    icon: <FiDownload size={24} color={theme.colors.primary[200]} />,
+    icon: <FiDownload size={24} color={theme.colors.primary[600]} />,
     title: "Download PDF",
     desc: "FBR-compliant PDF ready to send to your client.",
   },
