@@ -4,46 +4,46 @@
 // Font CSS variables are set here so every component can use them via
 // var(--font-display), var(--font-body), var(--font-mono).
 
-import type { Metadata } from "next";
-import { fraunces, publicSans, plexMono } from "@/styles/fonts";
-import "./globals.css";
+// import type { Metadata } from "next";
+// import { fraunces, publicSans, plexMono } from "@/styles/fonts";
+// import "./globals.css";
 
-export const metadata: Metadata = {
-  title: "InvoicePK — GST-Compliant Invoices for Pakistani Freelancers",
-  description:
-    "Generate FBR-compliant GST invoices in 2 minutes. Auto-calculate GST, WHT, and download professional PDFs. Built for Pakistani freelancers and agencies.",
-  keywords:
-    "invoice pakistan, GST invoice, FBR invoice, freelancer invoice pakistan, WHT invoice",
-};
+// export const metadata: Metadata = {
+//   title: "InvoicePK — GST-Compliant Invoices for Pakistani Freelancers",
+//   description:
+//     "Generate FBR-compliant GST invoices in 2 minutes. Auto-calculate GST, WHT, and download professional PDFs. Built for Pakistani freelancers and agencies.",
+//   keywords:
+//     "invoice pakistan, GST invoice, FBR invoice, freelancer invoice pakistan, WHT invoice",
+// };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <html
-      lang="en"
-      className={`
-        ${fraunces.variable}
-        ${publicSans.variable}
-        ${plexMono.variable}
-      `}
-    >
-      <body
-        style={{
-          fontFamily: "var(--font-body)",
-          backgroundColor: "#F7F5EF",
-          color: "#2B2924",
-          minHeight: "100vh",
-          margin: 0,
-        }}
-      >
-        {children}
-      </body>
-    </html>
-  );
-}
+// export default function RootLayout({
+//   children,
+// }: {
+//   children: React.ReactNode;
+// }) {
+//   return (
+//     <html
+//       lang="en"
+//       className={`
+//         ${fraunces.variable}
+//         ${publicSans.variable}
+//         ${plexMono.variable}
+//       `}
+//     >
+//       <body
+//         style={{
+//           fontFamily: "var(--font-body)",
+//           backgroundColor: "#F7F5EF",
+//           color: "#2B2924",
+//           minHeight: "100vh",
+//           margin: 0,
+//         }}
+//       >
+//         {children}
+//       </body>
+//     </html>
+//   );
+// }
 
 /* ============================================================================
    COMMIT HISTORY
@@ -94,3 +94,9 @@ export default function RootLayout({
    - Ensured every page inherits the root layout configuration
 
 ============================================================================ */
+
+import Landing from "../components/Landing";
+
+export default function HomePage() {
+  return <Landing />;
+}
