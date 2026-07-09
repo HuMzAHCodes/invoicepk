@@ -180,3 +180,26 @@ export default function LogoUpload({
     </div>
   );
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Functionality Summary
+// • Provides a reusable logo upload component for managing a business profile's
+//   branding image.
+// • Displays the current business logo or a placeholder when no logo has been
+//   uploaded.
+// • Allows users to upload PNG and JPG images through a hidden file input with
+//   a custom styled upload button.
+// • Authenticates upload requests using the current Firebase user before
+//   submitting the selected image to the backend logo upload API.
+// • Handles upload progress, success, and error states while providing clear
+//   feedback throughout the upload process.
+// • Notifies the parent component with the newly uploaded logo URL so the
+//   business profile can update immediately without a page refresh.
+// • Supports removing the current logo by clearing the stored logo URL through
+//   the supplied callback.
+// • Restricts uploads to supported image formats and provides guidance on
+//   recommended file size and usage.
+// • Uses the centralized theme configuration to maintain consistent spacing,
+//   typography, colors, borders, and interactive styling across the business
+//   profile interface.
+// ─────────────────────────────────────────────────────────────────────────────

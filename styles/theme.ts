@@ -57,6 +57,7 @@ const theme = {
     // Neutral — body text, borders, table rows, backgrounds
     neutral: {
       50:  '#F7F5EF',
+      100: '#F0EAE0',
       200: '#DEDACB',
       400: '#A8A395',
       600: '#6E6A5D',
