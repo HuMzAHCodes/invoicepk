@@ -2,6 +2,7 @@
 import type { Metadata } from "next";
 import { fraunces, publicSans, plexMono } from "@/styles/fonts";
 import { AuthProvider } from "@/lib/auth-context";
+import { ToastProvider } from "@/components/Toast";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -35,8 +36,27 @@ export default function RootLayout({
           margin: 0,
         }}
       >
-        <AuthProvider>{children}</AuthProvider>
+        <ToastProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </ToastProvider>
       </body>
     </html>
   );
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Functionality Summary
+// • Defines the application's root layout shared across all routes.
+// • Configures global metadata, including the page title, description, and
+//   SEO keywords for improved search engine visibility.
+// • Registers and applies the application's custom font families through CSS
+//   variables, making them available throughout the project.
+// • Establishes global body styling, including typography, background color,
+//   text color, minimum viewport height, and default margin reset.
+// • Wraps the application with the ToastProvider, enabling application-wide
+//   toast notifications.
+// • Wraps the application with the AuthProvider, providing authentication
+//   context and user state to all components.
+// • Renders all page content through the shared layout, ensuring consistent
+//   styling and provider availability across the application.
+// ─────────────────────────────────────────────────────────────────────────────
