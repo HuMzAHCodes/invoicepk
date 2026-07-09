@@ -64,8 +64,8 @@ export default function Settings() {
   useEffect(() => {
     async function fetchBusiness() {
       try {
-        const data = await apiGet<{ data: BusinessData }>("/business");
-        setBusiness(data.data);
+        const data = await apiGet<BusinessData>("/business");
+        setBusiness(data);
       } catch (err: unknown) {
         setError(err instanceof Error ? err.message : "Failed to load profile");
       } finally {
