@@ -63,8 +63,8 @@ const progressWrap: React.CSSProperties = {
   position: "fixed",
   bottom: theme.spacing[6],
   right: theme.spacing[6],
-  width: "48px",
-  height: "48px",
+  width: "72px",
+  height: "72px",
   zIndex: 200,
   cursor: "pointer",
 };
@@ -76,7 +76,7 @@ const progressText: React.CSSProperties = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   fontFamily: theme.fonts.mono,
-  fontSize: "0.6rem",
+  fontSize: "0.75rem",
   fontWeight: theme.fontWeights.bold,
   color: theme.colors.primary[600],
   pointerEvents: "none",
@@ -111,7 +111,7 @@ export default function Navbar() {
   }, []);
 
   // SVG circle values
-  const radius = 18;
+  const radius = 30;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (scrollPercent / 100) * circumference;
 
@@ -161,11 +161,11 @@ export default function Navbar() {
 
       {/* Scroll progress circle */}
       <div style={progressWrap} onClick={scrollToTop}>
-        <svg width="48" height="48" viewBox="0 0 48 48">
+        <svg width="72" height="72" viewBox="0 0 72 72">
           {/* Background circle */}
           <circle
-            cx="24"
-            cy="24"
+            cx="36"
+            cy="36"
             r={radius}
             fill={theme.colors.white}
             stroke={theme.colors.neutral[200]}
@@ -173,8 +173,8 @@ export default function Navbar() {
           />
           {/* Progress arc */}
           <circle
-            cx="24"
-            cy="24"
+            cx="36"
+            cy="36"
             r={radius}
             fill="none"
             stroke={theme.colors.primary[600]}
@@ -182,7 +182,7 @@ export default function Navbar() {
             strokeLinecap="round"
             strokeDasharray={circumference}
             strokeDashoffset={offset}
-            transform="rotate(-90 24 24)"
+            transform="rotate(-90 36 36)"
             style={{ transition: "stroke-dashoffset 0.15s ease" }}
           />
         </svg>
