@@ -13,10 +13,17 @@ function getAdmin() {
       : process.env.FIREBASE_SERVICE_ACCOUNT;
 
     if (serviceAccountRaw) {
-      const parsed = JSON.parse(serviceAccountRaw);
-      admin.initializeApp({
-        credential: admin.credential.cert(parsed),
-      });
+      try {
+        const parsed = JSON.parse(serviceAccountRaw);
+        console.log('[Firebase Admin] Using service account JSON | projectId:', parsed.project_id, '| clientEmail:', parsed.client_email);
+        admin.initializeApp({
+          credential: admin.credential.cert(parsed),
+        });
+        console.log('[Firebase Admin] Initialized successfully with service account JSON');
+      } catch (err) {
+        console.error('[Firebase Admin] Failed to parse service account JSON:', err);
+        throw err;
+      }
     } else {
       const projectId   = process.env.FIREBASE_PROJECT_ID;
       const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
