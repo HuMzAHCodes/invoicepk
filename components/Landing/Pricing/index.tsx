@@ -49,46 +49,50 @@ const cardsRow: React.CSSProperties = {
   alignItems: "stretch",
 };
 
-// Base card style
-const cardBase: React.CSSProperties = {
+// Free card — white bg, subtle border
+const cardFree: React.CSSProperties = {
   flex: 1,
   maxWidth: "400px",
   backgroundColor: theme.colors.white,
   borderRadius: "16px",
+  border: `1px solid ${theme.colors.neutral[200]}`,
   padding: theme.spacing[8],
   textAlign: "left" as const,
   display: "flex",
   flexDirection: "column" as const,
 };
 
-// Free card
-const cardFree: React.CSSProperties = {
-  ...cardBase,
-  border: `1px solid ${theme.colors.neutral[200]}`,
-};
-
-// Pro card
+// Pro card — dark green gradient
 const cardPro: React.CSSProperties = {
-  ...cardBase,
-  border: `2px solid ${theme.colors.primary[600]}`,
-  boxShadow: "0 16px 40px rgba(31, 92, 63, 0.1)",
+  flex: 1,
+  maxWidth: "400px",
+  background: `linear-gradient(160deg, ${theme.colors.primary[600]} 0%, ${theme.colors.primary[900]} 100%)`,
+  borderRadius: "16px",
+  border: "none",
+  padding: theme.spacing[8],
+  textAlign: "left" as const,
+  display: "flex",
+  flexDirection: "column" as const,
+  boxShadow: "0 20px 50px rgba(15, 46, 31, 0.25)",
+  position: "relative" as const,
 };
 
-// Most popular badge
+// Most popular badge — gold/accent
 const badge: React.CSSProperties = {
-  display: "inline-block",
+  position: "absolute",
+  top: theme.spacing[4],
+  right: theme.spacing[4],
   fontFamily: theme.fonts.body,
   fontSize: "0.65rem",
   fontWeight: theme.fontWeights.bold,
-  color: theme.colors.white,
-  backgroundColor: theme.colors.primary[600],
-  padding: "3px 10px",
+  color: theme.colors.primary[900],
+  backgroundColor: theme.colors.accent[400],
+  padding: "4px 12px",
   borderRadius: theme.radius.full,
   textTransform: "uppercase" as const,
-  marginBottom: theme.spacing[3],
 };
 
-// Plan name
+// Plan name — dark
 const planName: React.CSSProperties = {
   fontFamily: theme.fonts.display,
   fontSize: theme.fontSizes.xl,
@@ -97,21 +101,39 @@ const planName: React.CSSProperties = {
   marginBottom: theme.spacing[1],
 };
 
-// Price
+// Plan name — white (pro)
+const planNameWhite: React.CSSProperties = {
+  ...planName,
+  color: theme.colors.white,
+};
+
+// Price — dark
 const price: React.CSSProperties = {
   fontFamily: theme.fonts.mono,
-  fontSize: "2rem",
+  fontSize: "2.25rem",
   fontWeight: theme.fontWeights.bold,
   color: theme.colors.neutral[900],
   marginBottom: theme.spacing[1],
 };
 
-// Price period
+// Price — white (pro)
+const priceWhite: React.CSSProperties = {
+  ...price,
+  color: theme.colors.white,
+};
+
+// Period — grey
 const period: React.CSSProperties = {
   fontFamily: theme.fonts.body,
   fontSize: theme.fontSizes.sm,
   color: theme.colors.neutral[400],
   marginBottom: theme.spacing[6],
+};
+
+// Period — cream (pro)
+const periodCream: React.CSSProperties = {
+  ...period,
+  color: theme.colors.neutral[100],
 };
 
 // Feature row
@@ -122,11 +144,17 @@ const featureRow: React.CSSProperties = {
   marginBottom: theme.spacing[3],
 };
 
-// Feature text
+// Feature text — dark
 const featureText: React.CSSProperties = {
   fontFamily: theme.fonts.body,
   fontSize: theme.fontSizes.sm,
   color: theme.colors.neutral[600],
+};
+
+// Feature text — white (pro)
+const featureTextWhite: React.CSSProperties = {
+  ...featureText,
+  color: theme.colors.neutral[100],
 };
 
 // Outlined button (free)
@@ -137,21 +165,22 @@ const btnOutline: React.CSSProperties = {
   fontFamily: theme.fonts.body,
   fontSize: theme.fontSizes.base,
   fontWeight: theme.fontWeights.semibold,
-  color: theme.colors.primary[600],
-  backgroundColor: "transparent",
+  color: theme.colors.neutral[900],
+  backgroundColor: theme.colors.white,
   padding: `${theme.spacing[3]} ${theme.spacing[4]}`,
   borderRadius: theme.radius.md,
-  border: `1px solid ${theme.colors.primary[600]}`,
+  border: `1px solid ${theme.colors.neutral[200]}`,
   cursor: "pointer",
   textDecoration: "none",
   marginTop: "auto",
+  transition: theme.transitions.fast,
 };
 
-// Filled button (pro)
-const btnFilled: React.CSSProperties = {
+// White button (pro)
+const btnWhite: React.CSSProperties = {
   ...btnOutline,
-  color: theme.colors.white,
-  backgroundColor: theme.colors.primary[600],
+  color: theme.colors.primary[900],
+  backgroundColor: theme.colors.white,
   border: "none",
 };
 
@@ -220,14 +249,10 @@ export default function Pricing() {
             >
               <div style={planName}>Free</div>
               <div style={price}>PKR 0</div>
-              <div style={period}>per month</div>
+              <div style={period}>per month, forever</div>
               {freeFeatures.map((f) => (
                 <div key={f} style={featureRow}>
-                  <FiCheck
-                    size={16}
-                    color={theme.colors.success[600]}
-                    strokeWidth={3}
-                  />
+                  <FiCheck size={16} color={theme.colors.success[600]} strokeWidth={3} />
                   <span style={featureText}>{f}</span>
                 </div>
               ))}
@@ -246,20 +271,16 @@ export default function Pricing() {
               whileHover={{ y: -4, transition: { duration: 0.2 } }}
             >
               <div style={badge}>Most Popular</div>
-              <div style={planName}>Pro</div>
-              <div style={price}>PKR 999</div>
-              <div style={period}>per month</div>
+              <div style={planNameWhite}>Pro</div>
+              <div style={priceWhite}>PKR 999</div>
+              <div style={periodCream}>per month</div>
               {proFeatures.map((f) => (
                 <div key={f} style={featureRow}>
-                  <FiCheck
-                    size={16}
-                    color={theme.colors.success[600]}
-                    strokeWidth={3}
-                  />
-                  <span style={featureText}>{f}</span>
+                  <FiCheck size={16} color={theme.colors.success[400]} strokeWidth={3} />
+                  <span style={featureTextWhite}>{f}</span>
                 </div>
               ))}
-              <Link href="/login" style={btnFilled}>
+              <Link href="/login" style={btnWhite}>
                 Start Pro — PKR 999/mo
               </Link>
             </motion.div>
