@@ -118,7 +118,7 @@ export default function FAQ() {
   const [hovered, setHovered] = useState<number | null>(null);
 
   return (
-    <section style={section}>
+    <section id="faq" style={section}>
       <div style={container}>
         <motion.p
           style={label}
