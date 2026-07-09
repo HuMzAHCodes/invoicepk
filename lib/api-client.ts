@@ -149,6 +149,34 @@ export async function apiDownloadPDF(invoiceId: string, filename: string): Promi
   URL.revokeObjectURL(url);
 }
 
+// ─── Send Invoice Email ───────────────────────────────────────────────────
+
+export async function apiSendInvoiceEmail(
+  invoiceId: string,
+  recipientEmail: string,
+  message?: string
+): Promise<void> {
+  const user = auth.currentUser;
+  if (!user) throw new Error('Not authenticated');
+
+  const token = await user.getIdToken(true);
+
+  const res = await fetch(`${BASE_URL}/api/invoices/${invoiceId}/email`, {
+    method:  'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ recipientEmail, message }),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data?.error?.message ?? 'Failed to send email');
+  }
+}
+
 
 
 
