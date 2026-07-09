@@ -10,6 +10,7 @@
     "test": "jest --runInBand"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.4.0",
     "@react-pdf/renderer": "^4.5.1",
     "cloudinary": "^2.10.0",
     "firebase": "^12.15.0",
@@ -20,6 +21,7 @@
     "next": "16.2.9",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "react-hook-form": "^7.81.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
