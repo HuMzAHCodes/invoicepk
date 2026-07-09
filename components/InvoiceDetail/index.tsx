@@ -10,6 +10,7 @@ import LineItemsTable from "./LineItemsTable";
 import GSTSummary from "./GSTSummary";
 import StatusActions from "./StatusActions";
 import DeleteButton from "./DeleteButton";
+import SendEmailButton from "./SendEmailButton";
 import { InvoiceData } from "./types";
 
 // ─── Styles ───
@@ -243,6 +244,13 @@ export default function InvoiceDetail() {
           >
             {pdfLoading ? "Downloading..." : "Download PDF"}
           </button>
+          {invoice?.client?.email && (
+            <SendEmailButton
+              invoiceId={id}
+              invoiceNumber={invoice.invoiceNumber}
+              clientEmail={invoice.client.email}
+            />
+          )}
           {invoice?.status === "draft" && (
             <DeleteButton onDelete={handleDelete} loading={deleteLoading} />
           )}
