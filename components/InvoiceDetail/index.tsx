@@ -30,8 +30,10 @@ const header: React.CSSProperties = {
 
 const actionsRow: React.CSSProperties = {
   display: "flex",
+  flexWrap: "wrap",
   justifyContent: "space-between",
   alignItems: "center",
+  gap: theme.spacing[3],
   marginBottom: theme.spacing[4],
 };
 
@@ -88,13 +90,12 @@ const noteText: React.CSSProperties = {
   whiteSpace: "pre-wrap",
 };
 
-// Actions right side button group
 const actionsRight: React.CSSProperties = {
   display: "flex",
+  flexWrap: "wrap",
   gap: theme.spacing[3],
 };
 
-// Download PDF button base
 const pdfBtn: React.CSSProperties = {
   display: "flex",
   alignItems: "center",
@@ -109,16 +110,15 @@ const pdfBtn: React.CSSProperties = {
   fontWeight: theme.fontWeights.medium,
   cursor: "pointer",
   transition: theme.transitions.fast,
+  flexShrink: 0,
 };
 
-// Download PDF button when loading
 const pdfBtnDisabled: React.CSSProperties = {
   ...pdfBtn,
   cursor: "not-allowed",
   opacity: 0.5,
 };
 
-// Section spacing wrapper
 const section: React.CSSProperties = {
   marginTop: theme.spacing[4],
 };
@@ -164,9 +164,7 @@ export default function InvoiceDetail() {
         status: string;
       }>(`/invoices/${id}/status`, { status: newStatus });
       setInvoice((prev) =>
-        prev
-          ? { ...prev, status: data.status as InvoiceData["status"] }
-          : prev,
+        prev ? { ...prev, status: data.status as InvoiceData["status"] } : prev,
       );
       setMessage(`Invoice marked as ${newStatus}`);
       showToast(`Invoice marked as ${newStatus}`, "success");
@@ -292,7 +290,6 @@ export default function InvoiceDetail() {
     </div>
   );
 }
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Functionality Summary
 // • Serves as the main invoice details page responsible for displaying a
