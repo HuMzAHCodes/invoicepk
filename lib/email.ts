@@ -3,7 +3,17 @@
 
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+let resend: Resend;
+
+function getResend(): Resend {
+  if (!resend) {
+    if (!process.env.RESEND_API_KEY) {
+      throw new Error('RESEND_API_KEY environment variable is not set');
+    }
+    resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return resend;
+}
 
 interface SendInvoiceEmailParams {
   to: string;
@@ -23,7 +33,7 @@ export async function sendInvoiceEmail({
 }: SendInvoiceEmailParams) {
   const from = process.env.EMAIL_FROM || 'InvoicePK <noreply@invoicepk.com>';
 
-  const { data, error } = await resend.emails.send({
+  const { data, error } = await getResend().emails.send({
     from,
     to: [to],
     subject,
