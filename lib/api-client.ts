@@ -5,7 +5,7 @@
 
 import { auth } from '@/lib/firebase-client';
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || '';
 
 async function getAuthHeaders(): Promise<HeadersInit> {
   const user = auth.currentUser;
