@@ -3,11 +3,6 @@
 import theme from "@/styles/theme";
 import { InvoiceData } from "../types";
 
-// ─── Props ───
-interface InvoiceInfoProps {
-  invoice: InvoiceData;
-}
-
 // ─── Helpers ───
 const fmtDate = (d: string | null | undefined) =>
   d
@@ -29,7 +24,7 @@ const card: React.CSSProperties = {
 
 const grid: React.CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "1fr 1fr",
+  gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
   gap: theme.spacing[4],
 };
 
@@ -123,4 +118,8 @@ export default function InvoiceInfo({ invoice }: InvoiceInfoProps) {
       </div>
     </div>
   );
+}
+
+interface InvoiceInfoProps {
+  invoice: InvoiceData;
 }
