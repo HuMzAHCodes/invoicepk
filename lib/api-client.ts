@@ -8,6 +8,9 @@ import { auth } from '@/lib/firebase-client';
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || '';
 
 async function getAuthHeaders(): Promise<HeadersInit> {
+  // Wait for Firebase to retrieve/initialize the user session from IndexedDB/Cookies
+  await auth.authStateReady();
+
   const user = auth.currentUser;
 
   if (!user) {
