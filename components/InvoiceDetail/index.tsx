@@ -142,8 +142,8 @@ export default function InvoiceDetail() {
     if (!id) return;
     async function fetchInvoice() {
       try {
-        const data = await apiGet<{ data: InvoiceData }>(`/invoices/${id}`);
-        setInvoice(data.data);
+        const data = await apiGet<InvoiceData>(`/invoices/${id}`);
+        setInvoice(data);
       } catch (err: unknown) {
         setError(err instanceof Error ? err.message : "Failed to load invoice");
       } finally {
