@@ -19,4 +19,6 @@ if (!admin.apps.length) {
   });
 }
 
-export default admin;
+export default function getAdmin() {
+  return admin;
+}
