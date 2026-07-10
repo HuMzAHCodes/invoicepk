@@ -1,18 +1,24 @@
 // lib/email.ts
-// Email service using Resend for sending invoices with PDF attachments.
+// Email service using Nodemailer (Gmail SMTP) for sending invoices with PDF attachments.
 
-import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
 
-let resend: Resend;
+let transporter: nodemailer.Transporter;
 
-function getResend(): Resend {
-  if (!resend) {
-    if (!process.env.RESEND_API_KEY) {
-      throw new Error('RESEND_API_KEY environment variable is not set');
+function getTransporter(): nodemailer.Transporter {
+  if (!transporter) {
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASSWORD) {
+      throw new Error('SMTP_USER and SMTP_PASSWORD environment variables are not set');
     }
-    resend = new Resend(process.env.RESEND_API_KEY);
+    transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASSWORD,
+      },
+    });
   }
-  return resend;
+  return transporter;
 }
 
 interface SendInvoiceEmailParams {
@@ -31,22 +37,18 @@ export async function sendInvoiceEmail({
   html,
   attachments,
 }: SendInvoiceEmailParams) {
-  const from = process.env.EMAIL_FROM || 'InvoicePK <noreply@invoicepk.com>';
+  const from = process.env.EMAIL_FROM || `InvoicePK <${process.env.SMTP_USER}>`;
 
-  const { data, error } = await getResend().emails.send({
+  const info = await getTransporter().sendMail({
     from,
-    to: [to],
+    to,
     subject,
     html,
     attachments: attachments.map((att) => ({
       filename: att.filename,
-      content: att.content.toString('base64'),
+      content: att.content,
     })),
   });
 
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  return data;
+  return info;
 }
