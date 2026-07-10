@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import theme from '@/styles/theme';
+import theme from "@/styles/theme";
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -16,7 +16,7 @@ interface InvoiceFiltersProps {
 
 // ─── Constants ─────────────────────────────────────────────────────────────
 
-const STATUS_OPTIONS = ['All', 'Draft', 'Sent', 'Paid'];
+const STATUS_OPTIONS = ["All", "Draft", "Sent", "Paid"];
 
 // ─── Component ─────────────────────────────────────────────────────────────
 
@@ -29,20 +29,21 @@ export default function InvoiceFilters({
   onToChange,
   onClear,
 }: InvoiceFiltersProps) {
-  const hasFilters = status !== 'All' || from !== '' || to !== '';
+  const hasFilters = status !== "All" || from !== "" || to !== "";
 
   // ─── Styles ────────────────────────────────────────────────────────────
 
   const containerStyle: React.CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
-    flexWrap: 'wrap',
+    display: "flex",
+    alignItems: "center",
+    flexWrap: "wrap",
     gap: theme.spacing[3],
     marginBottom: theme.spacing[6],
   };
 
   const pillsStyle: React.CSSProperties = {
-    display: 'flex',
+    display: "flex",
+    flexWrap: "wrap",
     gap: theme.spacing[1],
     backgroundColor: theme.colors.neutral[50],
     borderRadius: theme.radius.lg,
@@ -53,24 +54,21 @@ export default function InvoiceFilters({
     return {
       padding: `${theme.spacing[2]} ${theme.spacing[4]}`,
       borderRadius: theme.radius.md,
-      border: 'none',
+      border: "none",
       fontFamily: theme.fonts.body,
       fontSize: theme.fontSizes.sm,
       fontWeight: theme.fontWeights.medium,
-      cursor: 'pointer',
+      cursor: "pointer",
       transition: theme.transitions.fast,
-      backgroundColor: active
-        ? theme.colors.primary[600]
-        : 'transparent',
-      color: active
-        ? theme.colors.white
-        : theme.colors.neutral[600],
+      backgroundColor: active ? theme.colors.primary[600] : "transparent",
+      color: active ? theme.colors.white : theme.colors.neutral[600],
+      whiteSpace: "nowrap",
     };
   }
 
   const dateGroupStyle: React.CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
+    display: "flex",
+    alignItems: "center",
     gap: theme.spacing[2],
   };
 
@@ -79,6 +77,7 @@ export default function InvoiceFilters({
     fontSize: theme.fontSizes.sm,
     fontWeight: theme.fontWeights.medium,
     color: theme.colors.neutral[600],
+    whiteSpace: "nowrap",
   };
 
   const dateInputStyle: React.CSSProperties = {
@@ -89,9 +88,11 @@ export default function InvoiceFilters({
     fontSize: theme.fontSizes.sm,
     color: theme.colors.neutral[900],
     backgroundColor: theme.colors.white,
-    outline: 'none',
+    outline: "none",
     transition: theme.transitions.fast,
-    width: '150px',
+    minWidth: "150px",
+    maxWidth: "100%",
+    flex: "1 1 150px",
   };
 
   const clearStyle: React.CSSProperties = {
@@ -99,10 +100,10 @@ export default function InvoiceFilters({
     fontSize: theme.fontSizes.sm,
     fontWeight: theme.fontWeights.medium,
     color: theme.colors.primary[600],
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-    textDecoration: 'none',
+    background: "none",
+    border: "none",
+    cursor: "pointer",
+    textDecoration: "none",
     transition: theme.transitions.fast,
     padding: `${theme.spacing[2]} ${theme.spacing[3]}`,
   };
@@ -115,9 +116,7 @@ export default function InvoiceFilters({
       <div style={pillsStyle}>
         {STATUS_OPTIONS.map((opt) => {
           const active =
-            opt === 'All'
-              ? status === 'All'
-              : status === opt.toLowerCase();
+            opt === "All" ? status === "All" : status === opt.toLowerCase();
 
           return (
             <button
@@ -125,7 +124,7 @@ export default function InvoiceFilters({
               type="button"
               style={pillStyle(active)}
               onClick={() =>
-                onStatusChange(opt === 'All' ? 'All' : opt.toLowerCase())
+                onStatusChange(opt === "All" ? "All" : opt.toLowerCase())
               }
               onMouseEnter={(e) => {
                 if (!active) {
@@ -136,7 +135,7 @@ export default function InvoiceFilters({
               }}
               onMouseLeave={(e) => {
                 if (!active) {
-                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.backgroundColor = "transparent";
                   e.currentTarget.style.color = theme.colors.neutral[600];
                 }
               }}
@@ -187,10 +186,10 @@ export default function InvoiceFilters({
           style={clearStyle}
           onClick={onClear}
           onMouseEnter={(e) => {
-            e.currentTarget.style.textDecoration = 'underline';
+            e.currentTarget.style.textDecoration = "underline";
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.textDecoration = 'none';
+            e.currentTarget.style.textDecoration = "none";
           }}
         >
           Clear filters

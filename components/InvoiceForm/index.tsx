@@ -193,246 +193,240 @@ export default function InvoiceForm() {
     transition: theme.transitions.fast,
   };
 
-  const responsiveCSS = `
-    @media (max-width: 1024px) {
-      .invoice-form-layout { flex-direction: column !important; }
-      .invoice-form-main, .invoice-form-sidebar { width: 100% !important; }
-      .invoice-form-sidebar { position: static !important; }
-    }
-    @media (max-width: 768px) {
-      .line-items-grid { grid-template-columns: 1fr !important; }
-      .line-items-header { display: none !important; }
-    }
-  `;
+  // Responsive layout styles
+  const layoutStyle: React.CSSProperties = {
+    display: "flex",
+    gap: theme.spacing[6],
+    flexWrap: "wrap",
+  };
+
+  const mainStyle: React.CSSProperties = {
+    flex: "1 1 500px",
+    minWidth: 0,
+  };
+
+  const sidebarStyle: React.CSSProperties = {
+    flex: "0 0 320px",
+    minWidth: "280px",
+  };
+
+  const gridStyle: React.CSSProperties = {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+    gap: theme.spacing[4],
+  };
 
   return (
-    <>
-      <style>{responsiveCSS}</style>
-      <form onSubmit={handleSubmit}>
-        <div
-          className="invoice-form-layout"
-          style={{ display: "flex", gap: theme.spacing[6] }}
-        >
-          {/* Main form */}
-          <div className="invoice-form-main" style={{ flex: 1, minWidth: 0 }}>
-            {/* Client */}
-            <div
+    <form onSubmit={handleSubmit}>
+      <div style={layoutStyle}>
+        {/* Main form */}
+        <div style={mainStyle}>
+          {/* Client */}
+          <div
+            style={{
+              backgroundColor: theme.colors.white,
+              border: `1px solid ${theme.colors.neutral[200]}`,
+              borderRadius: theme.radius.lg,
+              padding: theme.spacing[5],
+              marginBottom: theme.spacing[5],
+            }}
+          >
+            <h3
               style={{
-                backgroundColor: theme.colors.white,
-                border: `1px solid ${theme.colors.neutral[200]}`,
-                borderRadius: theme.radius.lg,
-                padding: theme.spacing[5],
-                marginBottom: theme.spacing[5],
+                fontFamily: theme.fonts.body,
+                fontSize: theme.fontSizes.base,
+                fontWeight: theme.fontWeights.semibold,
+                color: theme.colors.neutral[900],
+                margin: "0 0 16px",
               }}
             >
-              <h3
-                style={{
-                  fontFamily: theme.fonts.body,
-                  fontSize: theme.fontSizes.base,
-                  fontWeight: theme.fontWeights.semibold,
-                  color: theme.colors.neutral[900],
-                  margin: "0 0 16px",
-                }}
-              >
-                Client
-              </h3>
-              <ClientSelect
-                value={form.clientId}
-                onChange={handleClientChange}
-              />
-            </div>
+              Client
+            </h3>
+            <ClientSelect value={form.clientId} onChange={handleClientChange} />
+          </div>
 
-            {/* Invoice Details */}
-            <div
+          {/* Invoice Details */}
+          <div
+            style={{
+              backgroundColor: theme.colors.white,
+              border: `1px solid ${theme.colors.neutral[200]}`,
+              borderRadius: theme.radius.lg,
+              padding: theme.spacing[5],
+              marginBottom: theme.spacing[5],
+            }}
+          >
+            <h3
               style={{
-                backgroundColor: theme.colors.white,
-                border: `1px solid ${theme.colors.neutral[200]}`,
-                borderRadius: theme.radius.lg,
-                padding: theme.spacing[5],
-                marginBottom: theme.spacing[5],
+                fontFamily: theme.fonts.body,
+                fontSize: theme.fontSizes.base,
+                fontWeight: theme.fontWeights.semibold,
+                color: theme.colors.neutral[900],
+                margin: "0 0 16px",
               }}
             >
-              <h3
-                style={{
-                  fontFamily: theme.fonts.body,
-                  fontSize: theme.fontSizes.base,
-                  fontWeight: theme.fontWeights.semibold,
-                  color: theme.colors.neutral[900],
-                  margin: "0 0 16px",
-                }}
-              >
-                Invoice Details
-              </h3>
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr 1fr",
-                  gap: theme.spacing[4],
-                }}
-              >
-                <FormField label="Issue Date" required>
-                  <input
-                    type="date"
-                    value={form.issueDate}
-                    onChange={(e) => updateField({ issueDate: e.target.value })}
-                    style={inputStyle}
-                  />
-                </FormField>
-                <FormField label="Due Date">
-                  <input
-                    type="date"
-                    value={form.dueDate}
-                    onChange={(e) => updateField({ dueDate: e.target.value })}
-                    style={inputStyle}
-                  />
-                </FormField>
-                <FormField label="Currency">
-                  <select
-                    value={form.currency}
-                    onChange={(e) =>
-                      updateField({ currency: e.target.value as "PKR" | "USD" })
-                    }
-                    style={selectStyle}
-                  >
-                    <option value="PKR">PKR (Pakistani Rupee)</option>
-                    <option value="USD">USD (US Dollar)</option>
-                  </select>
-                </FormField>
-              </div>
-            </div>
-
-            {/* Line Items */}
-            <div
-              style={{
-                backgroundColor: theme.colors.white,
-                border: `1px solid ${theme.colors.neutral[200]}`,
-                borderRadius: theme.radius.lg,
-                padding: theme.spacing[5],
-                marginBottom: theme.spacing[5],
-              }}
-            >
-              <h3
-                style={{
-                  fontFamily: theme.fonts.body,
-                  fontSize: theme.fontSizes.base,
-                  fontWeight: theme.fontWeights.semibold,
-                  color: theme.colors.neutral[900],
-                  margin: "0 0 16px",
-                }}
-              >
-                Line Items
-              </h3>
-              <LineItems items={form.items} onChange={handleItemsChange} />
-            </div>
-
-            {/* GST */}
-            <div
-              style={{
-                backgroundColor: theme.colors.white,
-                border: `1px solid ${theme.colors.neutral[200]}`,
-                borderRadius: theme.radius.lg,
-                padding: theme.spacing[5],
-                marginBottom: theme.spacing[5],
-              }}
-            >
-              <h3
-                style={{
-                  fontFamily: theme.fonts.body,
-                  fontSize: theme.fontSizes.base,
-                  fontWeight: theme.fontWeights.semibold,
-                  color: theme.colors.neutral[900],
-                  margin: "0 0 16px",
-                }}
-              >
-                Tax Configuration
-              </h3>
-              <GSTSection
-                gstType={form.gstType}
-                gstRate={form.gstRate}
-                whtApplicable={form.whtApplicable}
-                whtRate={form.whtRate}
-                isClientCorporate={isCorporateClient}
-                onChange={handleGSTChange}
-              />
-            </div>
-
-            {/* Notes */}
-            <div
-              style={{
-                backgroundColor: theme.colors.white,
-                border: `1px solid ${theme.colors.neutral[200]}`,
-                borderRadius: theme.radius.lg,
-                padding: theme.spacing[5],
-                marginBottom: theme.spacing[5],
-              }}
-            >
-              <h3
-                style={{
-                  fontFamily: theme.fonts.body,
-                  fontSize: theme.fontSizes.base,
-                  fontWeight: theme.fontWeights.semibold,
-                  color: theme.colors.neutral[900],
-                  margin: "0 0 16px",
-                }}
-              >
-                Notes
-              </h3>
-              <textarea
-                value={form.notes}
-                onChange={(e) => updateField({ notes: e.target.value })}
-                placeholder="Payment terms, additional notes..."
-                rows={3}
-                style={{ ...inputStyle, resize: "vertical", minHeight: "80px" }}
-                onFocus={(e) => {
-                  e.currentTarget.style.borderColor = theme.colors.primary[600];
-                }}
-                onBlur={(e) => {
-                  e.currentTarget.style.borderColor = theme.colors.neutral[200];
-                }}
-              />
-            </div>
-
-            {/* Actions */}
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "flex-end",
-                gap: theme.spacing[3],
-                marginBottom: theme.spacing[8],
-              }}
-            >
-              <button
-                type="button"
-                onClick={() => router.back()}
-                style={btnSecondary}
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                style={{ ...btnPrimary, opacity: isSubmitting ? 0.6 : 1 }}
-              >
-                {isSubmitting ? "Creating..." : "Create Invoice"}
-              </button>
+              Invoice Details
+            </h3>
+            <div style={gridStyle}>
+              <FormField label="Issue Date" required>
+                <input
+                  type="date"
+                  value={form.issueDate}
+                  onChange={(e) => updateField({ issueDate: e.target.value })}
+                  style={inputStyle}
+                />
+              </FormField>
+              <FormField label="Due Date">
+                <input
+                  type="date"
+                  value={form.dueDate}
+                  onChange={(e) => updateField({ dueDate: e.target.value })}
+                  style={inputStyle}
+                />
+              </FormField>
+              <FormField label="Currency">
+                <select
+                  value={form.currency}
+                  onChange={(e) =>
+                    updateField({ currency: e.target.value as "PKR" | "USD" })
+                  }
+                  style={selectStyle}
+                >
+                  <option value="PKR">PKR (Pakistani Rupee)</option>
+                  <option value="USD">USD (US Dollar)</option>
+                </select>
+              </FormField>
             </div>
           </div>
 
-          {/* Totals sidebar */}
+          {/* Line Items */}
           <div
-            className="invoice-form-sidebar"
-            style={{ width: "320px", flexShrink: 0 }}
+            style={{
+              backgroundColor: theme.colors.white,
+              border: `1px solid ${theme.colors.neutral[200]}`,
+              borderRadius: theme.radius.lg,
+              padding: theme.spacing[5],
+              marginBottom: theme.spacing[5],
+            }}
           >
-            <TotalsSidebar
-              totals={totals}
-              currency={form.currency}
+            <h3
+              style={{
+                fontFamily: theme.fonts.body,
+                fontSize: theme.fontSizes.base,
+                fontWeight: theme.fontWeights.semibold,
+                color: theme.colors.neutral[900],
+                margin: "0 0 16px",
+              }}
+            >
+              Line Items
+            </h3>
+            <LineItems items={form.items} onChange={handleItemsChange} />
+          </div>
+
+          {/* GST */}
+          <div
+            style={{
+              backgroundColor: theme.colors.white,
+              border: `1px solid ${theme.colors.neutral[200]}`,
+              borderRadius: theme.radius.lg,
+              padding: theme.spacing[5],
+              marginBottom: theme.spacing[5],
+            }}
+          >
+            <h3
+              style={{
+                fontFamily: theme.fonts.body,
+                fontSize: theme.fontSizes.base,
+                fontWeight: theme.fontWeights.semibold,
+                color: theme.colors.neutral[900],
+                margin: "0 0 16px",
+              }}
+            >
+              Tax Configuration
+            </h3>
+            <GSTSection
               gstType={form.gstType}
+              gstRate={form.gstRate}
               whtApplicable={form.whtApplicable}
+              whtRate={form.whtRate}
+              isClientCorporate={isCorporateClient}
+              onChange={handleGSTChange}
             />
           </div>
+
+          {/* Notes */}
+          <div
+            style={{
+              backgroundColor: theme.colors.white,
+              border: `1px solid ${theme.colors.neutral[200]}`,
+              borderRadius: theme.radius.lg,
+              padding: theme.spacing[5],
+              marginBottom: theme.spacing[5],
+            }}
+          >
+            <h3
+              style={{
+                fontFamily: theme.fonts.body,
+                fontSize: theme.fontSizes.base,
+                fontWeight: theme.fontWeights.semibold,
+                color: theme.colors.neutral[900],
+                margin: "0 0 16px",
+              }}
+            >
+              Notes
+            </h3>
+            <textarea
+              value={form.notes}
+              onChange={(e) => updateField({ notes: e.target.value })}
+              placeholder="Payment terms, additional notes..."
+              rows={3}
+              style={{ ...inputStyle, resize: "vertical", minHeight: "80px" }}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = theme.colors.primary[600];
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = theme.colors.neutral[200];
+              }}
+            />
+          </div>
+
+          {/* Actions */}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              gap: theme.spacing[3],
+              marginBottom: theme.spacing[8],
+              flexWrap: "wrap",
+            }}
+          >
+            <button
+              type="button"
+              onClick={() => router.back()}
+              style={btnSecondary}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              style={{ ...btnPrimary, opacity: isSubmitting ? 0.6 : 1 }}
+            >
+              {isSubmitting ? "Creating..." : "Create Invoice"}
+            </button>
+          </div>
         </div>
-      </form>
-    </>
+
+        {/* Totals sidebar */}
+        <div style={sidebarStyle}>
+          <TotalsSidebar
+            totals={totals}
+            currency={form.currency}
+            gstType={form.gstType}
+            whtApplicable={form.whtApplicable}
+          />
+        </div>
+      </div>
+    </form>
   );
 }
 
