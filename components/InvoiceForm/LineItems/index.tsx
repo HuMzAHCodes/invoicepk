@@ -68,25 +68,35 @@ export default function LineItems({ items, onChange, errors }: LineItemsProps) {
     textAlign: "right",
   };
 
-  const removeBtnStyle: React.CSSProperties = {
+  const labelStyle: React.CSSProperties = {
+    fontFamily: theme.fonts.body,
+    fontSize: theme.fontSizes.xs,
+    fontWeight: theme.fontWeights.semibold,
+    color: theme.colors.neutral[400],
+    textTransform: "uppercase",
+    letterSpacing: "0.05em",
+  };
+
+  const removeBtnStyle = (disabled: boolean): React.CSSProperties => ({
     padding: "8px",
     border: "none",
     backgroundColor: "transparent",
     borderRadius: theme.radius.md,
-    cursor: items.length <= 1 ? "not-allowed" : "pointer",
-    color:
-      items.length <= 1 ? theme.colors.neutral[200] : theme.colors.danger[400],
+    cursor: disabled ? "not-allowed" : "pointer",
+    color: disabled ? theme.colors.neutral[200] : theme.colors.danger[400],
     transition: theme.transitions.fast,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-  };
+    flexShrink: 0,
+  });
 
   return (
     <div>
+      {/* ── Desktop header row (hidden on mobile) ─────────────────────── */}
       <div
+        className="hidden md:grid"
         style={{
-          display: "grid",
           gridTemplateColumns: "24px 1fr 80px 120px 130px 40px",
           gap: "8px",
           marginBottom: "8px",
@@ -94,136 +104,226 @@ export default function LineItems({ items, onChange, errors }: LineItemsProps) {
         }}
       >
         <span />
-        <span
-          style={{
-            fontFamily: theme.fonts.body,
-            fontSize: theme.fontSizes.xs,
-            fontWeight: theme.fontWeights.semibold,
-            color: theme.colors.neutral[400],
-            textTransform: "uppercase",
-            letterSpacing: "0.05em",
-          }}
-        >
-          Description
-        </span>
-        <span
-          style={{
-            fontFamily: theme.fonts.body,
-            fontSize: theme.fontSizes.xs,
-            fontWeight: theme.fontWeights.semibold,
-            color: theme.colors.neutral[400],
-            textTransform: "uppercase",
-            letterSpacing: "0.05em",
-            textAlign: "center",
-          }}
-        >
-          Qty
-        </span>
-        <span
-          style={{
-            fontFamily: theme.fonts.body,
-            fontSize: theme.fontSizes.xs,
-            fontWeight: theme.fontWeights.semibold,
-            color: theme.colors.neutral[400],
-            textTransform: "uppercase",
-            letterSpacing: "0.05em",
-            textAlign: "right",
-          }}
-        >
-          Unit Price
-        </span>
-        <span
-          style={{
-            fontFamily: theme.fonts.body,
-            fontSize: theme.fontSizes.xs,
-            fontWeight: theme.fontWeights.semibold,
-            color: theme.colors.neutral[400],
-            textTransform: "uppercase",
-            letterSpacing: "0.05em",
-            textAlign: "right",
-          }}
-        >
-          Amount
-        </span>
+        <span style={labelStyle}>Description</span>
+        <span style={{ ...labelStyle, textAlign: "center" }}>Qty</span>
+        <span style={{ ...labelStyle, textAlign: "right" }}>Unit Price</span>
+        <span style={{ ...labelStyle, textAlign: "right" }}>Amount</span>
         <span />
       </div>
 
       {items.map((item, index) => {
         const amount = (item.quantity || 0) * (item.unitPrice || 0);
+        const disabled = items.length <= 1;
+
         return (
-          <div
-            key={index}
-            style={{
-              display: "grid",
-              gridTemplateColumns: "24px 1fr 80px 120px 130px 40px",
-              gap: "8px",
-              marginBottom: "8px",
-              alignItems: "center",
-            }}
-          >
-            <GripVertical
-              size={16}
-              style={{ color: theme.colors.neutral[200], cursor: "grab" }}
-            />
-            <input
-              type="text"
-              value={item.description}
-              onChange={(e) => updateItem(index, "description", e.target.value)}
-              placeholder="Service or item"
-              style={inputStyle}
-              onFocus={(e) => {
-                e.currentTarget.style.borderColor = theme.colors.primary[600];
-              }}
-              onBlur={(e) => {
-                e.currentTarget.style.borderColor = theme.colors.neutral[200];
-              }}
-            />
-            <input
-              type="number"
-              value={item.quantity || ""}
-              onChange={(e) => updateItem(index, "quantity", e.target.value)}
-              min="1"
-              style={numInputStyle}
-              onFocus={(e) => {
-                e.currentTarget.style.borderColor = theme.colors.primary[600];
-              }}
-              onBlur={(e) => {
-                e.currentTarget.style.borderColor = theme.colors.neutral[200];
-              }}
-            />
-            <input
-              type="number"
-              value={item.unitPrice || ""}
-              onChange={(e) => updateItem(index, "unitPrice", e.target.value)}
-              min="0"
-              style={numInputStyle}
-              onFocus={(e) => {
-                e.currentTarget.style.borderColor = theme.colors.primary[600];
-              }}
-              onBlur={(e) => {
-                e.currentTarget.style.borderColor = theme.colors.neutral[200];
-              }}
-            />
+          <div key={index}>
+            {/* ── Desktop row: single 6-column grid ─────────────────────── */}
             <div
+              className="hidden md:grid"
               style={{
-                ...numInputStyle,
-                backgroundColor: theme.colors.neutral[50],
-                display: "flex",
+                gridTemplateColumns: "24px 1fr 80px 120px 130px 40px",
+                gap: "8px",
+                marginBottom: "8px",
                 alignItems: "center",
-                justifyContent: "flex-end",
               }}
             >
-              {amount.toLocaleString()}
+              <GripVertical
+                size={16}
+                style={{ color: theme.colors.neutral[200], cursor: "grab" }}
+              />
+              <input
+                type="text"
+                value={item.description}
+                onChange={(e) =>
+                  updateItem(index, "description", e.target.value)
+                }
+                placeholder="Service or item"
+                style={inputStyle}
+                onFocus={(e) =>
+                  (e.currentTarget.style.borderColor =
+                    theme.colors.primary[600])
+                }
+                onBlur={(e) =>
+                  (e.currentTarget.style.borderColor =
+                    theme.colors.neutral[200])
+                }
+              />
+              <input
+                type="number"
+                value={item.quantity || ""}
+                onChange={(e) => updateItem(index, "quantity", e.target.value)}
+                min="1"
+                style={numInputStyle}
+                onFocus={(e) =>
+                  (e.currentTarget.style.borderColor =
+                    theme.colors.primary[600])
+                }
+                onBlur={(e) =>
+                  (e.currentTarget.style.borderColor =
+                    theme.colors.neutral[200])
+                }
+              />
+              <input
+                type="number"
+                value={item.unitPrice || ""}
+                onChange={(e) => updateItem(index, "unitPrice", e.target.value)}
+                min="0"
+                style={numInputStyle}
+                onFocus={(e) =>
+                  (e.currentTarget.style.borderColor =
+                    theme.colors.primary[600])
+                }
+                onBlur={(e) =>
+                  (e.currentTarget.style.borderColor =
+                    theme.colors.neutral[200])
+                }
+              />
+              <div
+                style={{
+                  ...numInputStyle,
+                  backgroundColor: theme.colors.neutral[50],
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "flex-end",
+                }}
+              >
+                {amount.toLocaleString()}
+              </div>
+              <button
+                type="button"
+                onClick={() => removeItem(index)}
+                style={removeBtnStyle(disabled)}
+                disabled={disabled}
+                aria-label="Remove item"
+              >
+                <Trash2 size={16} />
+              </button>
             </div>
-            <button
-              type="button"
-              onClick={() => removeItem(index)}
-              style={removeBtnStyle}
-              disabled={items.length <= 1}
-              aria-label="Remove item"
+
+            {/* ── Mobile card: stacked layout ──────────────────────────────
+                Per FRONTEND_UI_SPEC.md §6: "Tables become scrollable cards
+                on mobile." Description gets its own full-width row; Qty,
+                Unit Price, and Amount sit in a 3-column row underneath. */}
+            <div
+              className="md:hidden"
+              style={{
+                border: `1px solid ${theme.colors.neutral[200]}`,
+                borderRadius: theme.radius.md,
+                padding: "12px",
+                marginBottom: "12px",
+              }}
             >
-              <Trash2 size={16} />
-            </button>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "8px",
+                  alignItems: "center",
+                  marginBottom: "10px",
+                }}
+              >
+                <GripVertical
+                  size={16}
+                  style={{
+                    color: theme.colors.neutral[200],
+                    cursor: "grab",
+                    flexShrink: 0,
+                  }}
+                />
+                <input
+                  type="text"
+                  value={item.description}
+                  onChange={(e) =>
+                    updateItem(index, "description", e.target.value)
+                  }
+                  placeholder="Service or item"
+                  style={{ ...inputStyle, flex: 1 }}
+                  onFocus={(e) =>
+                    (e.currentTarget.style.borderColor =
+                      theme.colors.primary[600])
+                  }
+                  onBlur={(e) =>
+                    (e.currentTarget.style.borderColor =
+                      theme.colors.neutral[200])
+                  }
+                />
+                <button
+                  type="button"
+                  onClick={() => removeItem(index)}
+                  style={removeBtnStyle(disabled)}
+                  disabled={disabled}
+                  aria-label="Remove item"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
+
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr 1fr",
+                  gap: "8px",
+                }}
+              >
+                <div>
+                  <div style={{ ...labelStyle, marginBottom: "4px" }}>Qty</div>
+                  <input
+                    type="number"
+                    value={item.quantity || ""}
+                    onChange={(e) =>
+                      updateItem(index, "quantity", e.target.value)
+                    }
+                    min="1"
+                    style={numInputStyle}
+                    onFocus={(e) =>
+                      (e.currentTarget.style.borderColor =
+                        theme.colors.primary[600])
+                    }
+                    onBlur={(e) =>
+                      (e.currentTarget.style.borderColor =
+                        theme.colors.neutral[200])
+                    }
+                  />
+                </div>
+                <div>
+                  <div style={{ ...labelStyle, marginBottom: "4px" }}>
+                    Price
+                  </div>
+                  <input
+                    type="number"
+                    value={item.unitPrice || ""}
+                    onChange={(e) =>
+                      updateItem(index, "unitPrice", e.target.value)
+                    }
+                    min="0"
+                    style={numInputStyle}
+                    onFocus={(e) =>
+                      (e.currentTarget.style.borderColor =
+                        theme.colors.primary[600])
+                    }
+                    onBlur={(e) =>
+                      (e.currentTarget.style.borderColor =
+                        theme.colors.neutral[200])
+                    }
+                  />
+                </div>
+                <div>
+                  <div style={{ ...labelStyle, marginBottom: "4px" }}>
+                    Amount
+                  </div>
+                  <div
+                    style={{
+                      ...numInputStyle,
+                      backgroundColor: theme.colors.neutral[50],
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "flex-end",
+                    }}
+                  >
+                    {amount.toLocaleString()}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         );
       })}
@@ -260,12 +360,12 @@ export default function LineItems({ items, onChange, errors }: LineItemsProps) {
           marginTop: "4px",
           transition: theme.transitions.fast,
         }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.backgroundColor = theme.colors.primary[50];
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.backgroundColor = "transparent";
-        }}
+        onMouseEnter={(e) =>
+          (e.currentTarget.style.backgroundColor = theme.colors.primary[50])
+        }
+        onMouseLeave={(e) =>
+          (e.currentTarget.style.backgroundColor = "transparent")
+        }
       >
         <Plus size={16} /> Add Line Item
       </button>
@@ -277,6 +377,13 @@ export default function LineItems({ items, onChange, errors }: LineItemsProps) {
 // Functionality Summary
 // • Provides a reusable line items editor for creating and updating invoice
 //   line items.
+// • Renders a desktop 6-column grid (drag handle, description, qty, unit
+//   price, amount, remove) at md breakpoint and above.
+// • Renders a stacked mobile card below md: full-width description row,
+//   then a 3-column Qty / Price / Amount row — per FRONTEND_UI_SPEC.md §6
+//   ("Tables become scrollable cards on mobile"). Fixes the overflow bug
+//   where fixed pixel column widths (394px+ before gaps) exceeded mobile
+//   viewport width and cut off Qty/Unit Price/Amount fields.
 // • Allows users to dynamically add and remove invoice items while ensuring
 //   at least one line item always remains.
 // • Supports inline editing of item descriptions, quantities, and unit prices,
