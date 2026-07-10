@@ -10,6 +10,7 @@ import LineItemsTable from "./LineItemsTable";
 import GSTSummary from "./GSTSummary";
 import StatusActions from "./StatusActions";
 import DeleteButton from "./DeleteButton";
+import SendEmailButton from "./SendEmailButton";
 import { InvoiceData } from "./types";
 
 // ─── Styles ───
@@ -141,8 +142,8 @@ export default function InvoiceDetail() {
     if (!id) return;
     async function fetchInvoice() {
       try {
-        const data = await apiGet<{ data: InvoiceData }>(`/invoices/${id}`);
-        setInvoice(data.data);
+        const data = await apiGet<InvoiceData>(`/invoices/${id}`);
+        setInvoice(data);
       } catch (err: unknown) {
         setError(err instanceof Error ? err.message : "Failed to load invoice");
       } finally {
@@ -243,6 +244,13 @@ export default function InvoiceDetail() {
           >
             {pdfLoading ? "Downloading..." : "Download PDF"}
           </button>
+          {invoice?.client?.email && (
+            <SendEmailButton
+              invoiceId={id}
+              invoiceNumber={invoice.invoiceNumber}
+              clientEmail={invoice.client.email}
+            />
+          )}
           {invoice?.status === "draft" && (
             <DeleteButton onDelete={handleDelete} loading={deleteLoading} />
           )}
