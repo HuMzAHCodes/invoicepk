@@ -159,11 +159,13 @@ export default function InvoiceDetail() {
     setMessage("");
     try {
       const data = await apiPatch<{
-        data: { id: string; invoiceNumber: string; status: string };
+        id: string;
+        invoiceNumber: string;
+        status: string;
       }>(`/invoices/${id}/status`, { status: newStatus });
       setInvoice((prev) =>
         prev
-          ? { ...prev, status: data.data.status as InvoiceData["status"] }
+          ? { ...prev, status: data.status as InvoiceData["status"] }
           : prev,
       );
       setMessage(`Invoice marked as ${newStatus}`);
