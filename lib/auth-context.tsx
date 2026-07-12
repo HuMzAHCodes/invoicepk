@@ -55,13 +55,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setToken(idToken);
 
         // Store token in cookie for middleware to read
-        document.cookie = `firebaseToken=${idToken}; path=/; max-age=3600; SameSite=Strict`;
+        document.cookie = `firebaseToken=${idToken}; path=/; max-age=3600; SameSite=Lax`;
       } else {
         setUser(null);
         setToken(null);
 
         // Clear cookie on sign out
-        document.cookie = "firebaseToken=; path=/; max-age=0";
+        document.cookie = "firebaseToken=; path=/; max-age=0; SameSite=Strict";
       }
 
       setLoading(false);
@@ -72,10 +72,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     await firebaseSignOut(auth);
-    document.cookie = "firebaseToken=; path=/; max-age=0";
+    document.cookie = "firebaseToken=; path=/; max-age=0; SameSite=Lax";
     router.push("/");
   };
-
   return (
     <AuthContext.Provider value={{ user, token, loading, signOut }}>
       {children}
