@@ -30,11 +30,8 @@ export default function LoginPage() {
       // 2. Get Firebase ID token
       const token = await user.getIdToken();
 
-      // 3. Set auth cookie for middleware
-      document.cookie = `firebaseToken=${token}; path=/; max-age=3600; SameSite=Strict`;
-
-      // 4. Ensure Business document exists (creates one if new user)
-      const res = await fetch("/api/auth/register", {
+      // 3. Ensure Business document exists (creates one if new user)
+      const registerRes = await fetch("/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -46,12 +43,26 @@ export default function LoginPage() {
         }),
       });
 
-      if (!res.ok) {
+      if (!registerRes.ok) {
         throw new Error("Failed to set up account. Please try again.");
       }
 
-      // 5. Redirect to dashboard
-      router.push("/dashboard");
+      // 4. Create server-side session cookie (httpOnly, secure)
+      const sessionRes = await fetch("/api/auth/session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idToken: token }),
+      });
+
+      if (!sessionRes.ok) {
+        const errData = await sessionRes.json().catch(() => ({}));
+        throw new Error(errData.error?.message ?? "Session creation failed.");
+      }
+
+      const { redirect } = await sessionRes.json();
+
+      // 5. Hard navigation — ensures cookie is sent with request
+      window.location.href = redirect;
     } catch (err: any) {
       if (err.code === "auth/popup-closed-by-user") {
         // User closed the popup — not an error
@@ -193,78 +204,308 @@ export default function LoginPage() {
   );
 }
 
-/*
-|--------------------------------------------------------------------------
-| Functionality Summary
-|--------------------------------------------------------------------------
-|
-| File:
-|   app/(auth)/login/page.tsx
-|
-| Purpose:
-|   Provides the application's authentication page using Google Sign-In.
-|   Supports both first-time and returning users by integrating Firebase
-|   Authentication with the backend registration endpoint.
-|
-| Authentication Flow:
-|   1. User clicks "Continue with Google".
-|   2. Opens the Firebase Google authentication popup.
-|   3. Authenticates the user with Google.
-|   4. Retrieves the Firebase ID token.
-|   5. Stores the token in a browser cookie for middleware authentication.
-|   6. Calls POST /api/auth/register to ensure a Business profile exists.
-|   7. Redirects authenticated users to the dashboard.
-|
-| User Experience:
-|   - Google authentication only.
-|   - Automatically supports both new and existing users.
-|   - Displays loading state during authentication.
-|   - Prevents duplicate login attempts while processing.
-|   - Displays descriptive error messages when authentication fails.
-|   - Gracefully ignores popup-close events initiated by the user.
-|
-| UI Components:
-|   - Welcome heading and application description.
-|   - Google Sign-In button with official Google SVG icon.
-|   - Error notification banner.
-|   - Terms of service and free plan information.
-|
-| State Management:
-|   - loading
-|       Controls button state and loading indicator.
-|
-|   - error
-|       Stores authentication and backend error messages.
-|
-| Backend Integration:
-|   - Firebase Authentication
-|       • GoogleAuthProvider
-|       • signInWithPopup()
-|       • getIdToken()
-|
-|   - API Endpoint
-|       POST /api/auth/register
-|       Ensures every authenticated user has a Business document.
-|
-| Cookie Management:
-|   - Stores the Firebase ID token as:
-|       firebaseToken
-|   - Used by Next.js middleware for protected routes.
-|
-| Error Handling:
-|   - Handles popup blocked errors.
-|   - Handles popup closed by user without displaying an error.
-|   - Handles backend registration failures.
-|   - Handles unexpected authentication errors.
-|
-| Navigation:
-|   - Successful authentication redirects users to:
-|       /dashboard
-|
-|--------------------------------------------------------------------------
-| Git Commit
-|--------------------------------------------------------------------------
-| feat(auth): implement Google Sign-In page with Firebase authentication,
-| automatic business registration, token persistence, and dashboard redirect
-|--------------------------------------------------------------------------
-*/
+// ─────────────────────────────────────────────────────────────────────────────
+// FILE FUNCTIONALITY SUMMARY
+// ─────────────────────────────────────────────────────────────────────────────
+//
+// Purpose:
+// This page provides the application's single authentication interface using
+// Google Sign-In with Firebase Authentication. It handles both first-time and
+// returning users automatically, creates new business accounts when necessary,
+// establishes a secure server-side session, and redirects authenticated users
+// to the dashboard.
+//
+// Route:
+//
+// /login
+//
+// Primary Responsibilities:
+//
+// • Display the Google Sign-In interface.
+// • Authenticate users with Firebase Authentication.
+// • Automatically register new users.
+// • Create secure server-side authentication sessions.
+// • Handle authentication errors gracefully.
+// • Redirect authenticated users into the application.
+//
+// Authentication Flow:
+//
+// ┌─────────────────────────┐
+// │ User clicks Sign In     │
+// └─────────────┬───────────┘
+//               │
+//               ▼
+//     Google Authentication Popup
+//               │
+//               ▼
+//     Firebase authenticates user
+//               │
+//               ▼
+//     Firebase returns authenticated user
+//               │
+//               ▼
+//     Retrieve Firebase ID Token
+//               │
+//               ▼
+//     POST /api/auth/register
+//               │
+//     Creates Business document if needed
+//               │
+//               ▼
+//     POST /api/auth/session
+//               │
+//     Creates secure httpOnly session cookie
+//               │
+//               ▼
+//     Browser performs hard navigation
+//               │
+//               ▼
+//          /dashboard
+//
+// Component State:
+//
+// loading
+// • Indicates whether authentication is currently in progress.
+// • Disables the sign-in button.
+// • Prevents duplicate login attempts.
+// • Changes the button label to "Signing in...".
+//
+// error
+// • Stores authentication or registration errors.
+// • Displays a styled error message above the login button.
+// • Cleared whenever a new login attempt begins.
+//
+// Google Authentication Process:
+//
+// 1. User clicks "Continue with Google".
+//
+// 2. Opens Firebase Google popup using:
+//
+//      signInWithPopup(auth, provider)
+//
+// 3. Google authenticates the user.
+//
+// 4. Firebase returns:
+//
+//      • User object
+//      • Authentication credentials
+//      • Access to Firebase ID Token
+//
+// Firebase Token:
+//
+// After successful authentication:
+//
+//      user.getIdToken()
+//
+// retrieves a signed Firebase ID token that proves the user's identity.
+//
+// This token is used for all subsequent authenticated API requests.
+//
+// Account Registration:
+//
+// The page always calls:
+//
+//      POST /api/auth/register
+//
+// using the Firebase ID token.
+//
+// Purpose:
+//
+// • First-time user
+//      → Creates a new Business document.
+//
+// • Existing user
+//      → Detects existing account and simply returns success.
+//
+// This allows both new and returning users to follow exactly the same login
+// flow without requiring separate registration and login pages.
+//
+// Default Business Name:
+//
+// When registering a business:
+//
+// Priority:
+//
+// 1. Google display name
+// 2. Email username
+// 3. "My Business"
+//
+// This ensures every business starts with a meaningful default name.
+//
+// Session Creation:
+//
+// After registration succeeds, the page calls:
+//
+//      POST /api/auth/session
+//
+// The session endpoint:
+//
+// • Verifies the Firebase token.
+// • Creates a secure httpOnly cookie.
+// • Returns:
+//
+//      {
+//          success: true,
+//          redirect: "/dashboard"
+//      }
+//
+// Browser Navigation:
+//
+// Instead of using:
+//
+//      router.push(...)
+//
+//
+// the page intentionally performs:
+//
+//      window.location.href = redirect
+//
+// Reason:
+//
+// A full browser navigation guarantees that the newly-created httpOnly cookie
+// is included in the very first request to protected dashboard pages,
+// preventing authentication race conditions.
+//
+// Error Handling:
+//
+// The component handles several authentication scenarios.
+//
+// Popup Closed:
+//
+// Error:
+//
+//      auth/popup-closed-by-user
+//
+// Behavior:
+//
+// • No error shown.
+// • Loading stops.
+// • User simply remains on the login page.
+//
+// Popup Blocked:
+//
+// Error:
+//
+//      auth/popup-blocked
+//
+// Behavior:
+//
+// • Displays an explanation asking the user to allow popups.
+//
+// Registration Failure:
+//
+// Possible causes:
+//
+// • API unavailable
+// • Network failure
+// • Backend validation error
+//
+// Displays:
+//
+//      "Failed to set up account. Please try again."
+//
+// Session Creation Failure:
+//
+// Possible causes:
+//
+// • Invalid Firebase token
+// • Expired authentication
+// • Server error
+//
+// Displays either:
+//
+// • Backend error message
+// • Generic session creation error
+//
+// Unknown Errors:
+//
+// Any unexpected exception displays:
+//
+//      err.message
+//
+// or
+//
+//      "Sign-in failed. Please try again."
+//
+// UI Elements:
+//
+// Header
+// • Welcomes users.
+// • Explains the application's purpose.
+//
+// Error Alert
+// • Appears only when an error exists.
+// • Uses warning colors for visibility.
+//
+// Google Sign-In Button
+// • Displays Google branding.
+// • Disabled while authenticating.
+// • Hover effects improve user interaction.
+// • Prevents multiple simultaneous requests.
+//
+// Footer Note
+// • Displays terms acknowledgement.
+// • Shows free plan limitations.
+//
+// Security Features:
+//
+// ✓ Uses Firebase Authentication.
+// ✓ Never stores passwords.
+// ✓ Authentication handled by Google.
+// ✓ Uses signed Firebase ID tokens.
+// ✓ Server creates secure httpOnly session cookies.
+// ✓ Tokens are never manually stored in localStorage.
+// ✓ Duplicate sign-in attempts prevented.
+// ✓ Registration endpoint protected using Bearer authentication.
+//
+// APIs Used:
+//
+// POST /api/auth/register
+//
+// Purpose:
+// • Create Business document for first-time users.
+// • Return success for existing users.
+//
+// Authentication:
+// • Bearer Firebase ID Token
+//
+// ----------------------------------------------------
+//
+// POST /api/auth/session
+//
+// Purpose:
+// • Verify Firebase token.
+// • Create secure authenticated session.
+// • Return dashboard redirect.
+//
+// Authentication:
+// • Firebase ID Token
+//
+// Dependencies:
+//
+// React
+// • useState
+//      Manages loading and error state.
+//
+// Firebase Authentication
+// • signInWithPopup()
+// • GoogleAuthProvider
+// • auth
+//
+// Next.js
+// • useRouter()
+//      Imported for future navigation needs (currently unused because hard
+//      navigation is intentionally preferred).
+//
+// Backend APIs
+// • /api/auth/register
+// • /api/auth/session
+//
+// End Result:
+//
+// This page serves as the complete authentication entry point for InvoicePK.
+// It authenticates users with Google, automatically provisions new business
+// accounts, establishes secure server-side authentication using an httpOnly
+// cookie, gracefully handles authentication failures, and redirects users into
+// the protected dashboard with an authenticated session.
+// ─────────────────────────────────────────────────────────────────────────────
