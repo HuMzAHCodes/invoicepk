@@ -4,8 +4,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutGrid, FileText, Users, Settings, LogOut } from "lucide-react";
-import { useAuth } from "@/lib/auth-context";
+import { LayoutGrid, FileText, Users, Settings } from "lucide-react";
 import theme from "@/styles/theme";
 
 // ─── Types ─────────────────────────────────────────────────────────────────
@@ -39,7 +38,6 @@ const DESKTOP_WIDTH = 1024;
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
-  const { signOut } = useAuth();
 
   const [isTablet, setIsTablet] = useState(false);
   const [isDesktop, setIsDesktop] = useState(true);
@@ -100,7 +98,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     gap: "2px",
     padding: collapsed ? "16px 8px" : "16px 12px",
     flex: 1,
-    paddingTop: "80px", // ← add this line
+    paddingTop: "80px",
   };
 
   function getNavItemStyle(href: string): React.CSSProperties {
@@ -158,25 +156,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     textOverflow: "ellipsis",
   };
 
-  const signOutButtonStyle: React.CSSProperties = {
-    display: "flex",
-    alignItems: "center",
-    gap: "12px",
-    padding: collapsed ? "10px" : "10px 12px",
-    borderRadius: theme.radius.md,
-    border: "none",
-    backgroundColor: "transparent",
-    color: theme.colors.neutral[600],
-    fontFamily: theme.fonts.body,
-    fontSize: theme.fontSizes.sm,
-    fontWeight: theme.fontWeights.medium,
-    cursor: "pointer",
-    transition: theme.transitions.fast,
-    width: "100%",
-    justifyContent: collapsed ? "center" : "flex-start",
-    marginTop: "8px",
-  };
-
   // ─── Render ────────────────────────────────────────────────────────────
 
   return (
@@ -228,29 +207,29 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             );
           })}
         </nav>
-
-        {/* Sign out */}
-        <div style={{ padding: collapsed ? "8px 8px 16px" : "8px 12px 16px" }}>
-          <button
-            type="button"
-            style={signOutButtonStyle}
-            onClick={signOut}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = theme.colors.danger[600];
-              e.currentTarget.style.backgroundColor = theme.colors.danger[50];
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = theme.colors.neutral[600];
-              e.currentTarget.style.backgroundColor = "transparent";
-            }}
-            title={collapsed ? "Sign out" : undefined}
-            aria-label="Sign out"
-          >
-            <LogOut style={{ width: 20, height: 20, flexShrink: 0 }} />
-            {!collapsed && <span>Sign out</span>}
-          </button>
-        </div>
       </aside>
     </>
   );
 }
+
+// Sign out
+//         <div style={{ padding: collapsed ? "8px 8px 16px" : "8px 12px 16px" }}>
+//           <button
+//             type="button"
+//             style={signOutButtonStyle}
+//             onClick={signOut}
+//             onMouseEnter={(e) => {
+//               e.currentTarget.style.color = theme.colors.danger[600];
+//               e.currentTarget.style.backgroundColor = theme.colors.danger[50];
+//             }}
+//             onMouseLeave={(e) => {
+//               e.currentTarget.style.color = theme.colors.neutral[600];
+//               e.currentTarget.style.backgroundColor = "transparent";
+//             }}
+//             title={collapsed ? "Sign out" : undefined}
+//             aria-label="Sign out"
+//           >
+//             <LogOut style={{ width: 20, height: 20, flexShrink: 0 }} />
+//             {!collapsed && <span>Sign out</span>}
+//           </button>
+//         </div>
