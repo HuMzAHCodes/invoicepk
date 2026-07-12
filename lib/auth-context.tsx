@@ -72,10 +72,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     await firebaseSignOut(auth);
-    document.cookie = "firebaseToken=; path=/; max-age=0; SameSite=Strict";
-    router.push("/login");
+    document.cookie = "firebaseToken=; path=/; max-age=0; SameSite=Lax";
+    router.push("/");
   };
-
   return (
     <AuthContext.Provider value={{ user, token, loading, signOut }}>
       {children}
