@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 import { apiPost } from "@/lib/api-client";
 import { calculateInvoice } from "@/lib/gst";
 import ClientSelect from "./ClientSelect";
+import DescribeAssistant, {
+  type InvoiceDraftResult,
+} from "./DescribeAssistant";
 import LineItems from "./LineItems";
 import GSTSection from "./GSTSection";
 import TotalsSidebar from "./TotalsSidebar";
@@ -89,6 +92,31 @@ export default function InvoiceForm() {
     }>,
   ) {
     setForm((prev) => ({ ...prev, ...updates }));
+  }
+
+  function handleApplyDraft(draft: InvoiceDraftResult) {
+    setIsCorporateClient(draft.isCorporate);
+    setForm((prev) => ({
+      ...prev,
+      clientId: draft.clientId ?? "",
+      issueDate: draft.issueDate || prev.issueDate,
+      dueDate: draft.dueDate ?? "",
+      currency: draft.currency,
+      gstType: draft.gstType,
+      gstRate: draft.gstRate,
+      whtApplicable: draft.isCorporate ? draft.whtApplicable : false,
+      whtRate: draft.whtRate,
+      notes: draft.notes || "",
+      items:
+        draft.items.length > 0
+          ? draft.items.map((item, i) => ({
+              description: item.description,
+              quantity: item.quantity,
+              unitPrice: item.unitPrice,
+              sortOrder: i,
+            }))
+          : prev.items,
+    }));
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -221,6 +249,8 @@ export default function InvoiceForm() {
       <div style={layoutStyle}>
         {/* Main form */}
         <div style={mainStyle}>
+          <DescribeAssistant onApply={handleApplyDraft} />
+
           {/* Client */}
           <div
             style={{
