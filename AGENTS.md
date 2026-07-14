@@ -40,6 +40,9 @@ Every route fetching a resource by ID must call `checkOwnership(resource, busine
 ### Free Tier Limit
 Hard cap of 5 invoices per month per business. Enforced server-side in `POST /api/invoices`.
 
+### Gemini AI (optional)
+`GEMINI_API_KEY` powers `POST /api/ai/invoice-draft` (describe/voice → invoice form auto-fill). Never import `lib/ai/*` from client components. Voice uses the browser Web Speech API (no key).
+
 ## Testing
 
 - Tests live in `__tests__/*.test.ts`
