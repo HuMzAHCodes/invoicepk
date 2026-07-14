@@ -41,7 +41,10 @@ Every route fetching a resource by ID must call `checkOwnership(resource, busine
 Hard cap of 5 invoices per month per business. Enforced server-side in `POST /api/invoices`.
 
 ### Gemini AI (optional)
-`GEMINI_API_KEY` powers `POST /api/ai/invoice-draft` (describe/voice → invoice form auto-fill). Never import `lib/ai/*` from client components. Voice uses the browser Web Speech API (no key).
+`GEMINI_API_KEY` powers AI features (server-only; never import `lib/ai/*` from client components):
+- `POST /api/ai/invoice-draft` — describe/voice → invoice form auto-fill
+- `POST /api/ai/chat` — natural-language Q&A over the business's invoices (overdue, unpaid, client balance, month summary)
+Voice draft uses the browser Web Speech API (no key). Chat answers always come from Mongo queries scoped by `businessId`, then Gemini only formats the reply.
 
 ## Testing
 
