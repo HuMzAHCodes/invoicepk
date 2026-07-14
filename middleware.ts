@@ -12,6 +12,7 @@ const protectedRoutes = [
   '/invoices',
   '/clients',
   '/settings',
+  '/assistant',
 ];
 
 // Routes only for unauthenticated users
