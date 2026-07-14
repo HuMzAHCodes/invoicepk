@@ -5,10 +5,11 @@ import FAQ from "./FAQ";
 import Pricing from "./Pricing";
 import CTABanner from "./CTABanner";
 import Footer from "./Footer";
+import { CursorProvider } from "@/components/CustomCursor";
 
 export default function Landing() {
   return (
-    <>
+    <CursorProvider targetIds={["how-it-works", "faq", "pricing"]}>
       <Navbar />
       <Hero />
       <HowItWorks />
@@ -16,6 +17,6 @@ export default function Landing() {
       <Pricing />
       <CTABanner />
       <Footer />
-    </>
+    </CursorProvider>
   );
 }
