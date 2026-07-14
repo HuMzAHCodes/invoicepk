@@ -28,3 +28,81 @@ body {
 html {
   scroll-behavior: smooth;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+/* Blob Cursor - Footer green (#4B8867) */
+.blob-cursor {
+  position: fixed;
+  top: 0; left: 0;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--cursor-color, #4B8867);
+  background: transparent;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  will-change: transform;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.blob-cursor.visible { opacity: 1; }
+.blob-cursor.hover { width: 48px; height: 48px; background: rgba(75,136,103,0.12); border-width: 3px; }
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .blob-cursor { display: none !important; }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* Blob Cursor - Footer green (#4B8867) */
+.blob-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--cursor-color, #4B8867);
+  background: transparent;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  will-change: transform;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.blob-cursor.visible {
+  opacity: 1;
+}
+
+.blob-cursor.hover {
+  width: 48px;
+  height: 48px;
+  background: rgba(75, 136, 103, 0.12);
+  border-width: 3px;
+}
+
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .blob-cursor {
+    display: none !important;
+  }
+}

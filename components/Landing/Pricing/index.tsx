@@ -4,23 +4,19 @@ import { motion } from "framer-motion";
 import { FiCheck } from "react-icons/fi";
 import Link from "next/link";
 import theme from "@/styles/theme";
+import { CursorZone } from "@/components/CustomCursor";
 
-// ─── Styles ───
-
-// Section wrapper
 const section: React.CSSProperties = {
   backgroundColor: theme.colors.surface,
   padding: `${theme.spacing[16]} ${theme.spacing[4]}`,
 };
 
-// Inner container centered
 const container: React.CSSProperties = {
   maxWidth: "900px",
   margin: "0 auto",
   textAlign: "center",
 };
 
-// Section label
 const label: React.CSSProperties = {
   fontFamily: theme.fonts.body,
   fontSize: theme.fontSizes.xs,
@@ -31,7 +27,6 @@ const label: React.CSSProperties = {
   marginBottom: theme.spacing[3],
 };
 
-// Main heading
 const heading: React.CSSProperties = {
   fontFamily: theme.fonts.display,
   fontSize: "2.25rem",
@@ -41,7 +36,6 @@ const heading: React.CSSProperties = {
   marginBottom: theme.spacing[12],
 };
 
-// Cards row
 const cardsRow: React.CSSProperties = {
   display: "flex",
   gap: theme.spacing[6],
@@ -49,7 +43,6 @@ const cardsRow: React.CSSProperties = {
   alignItems: "stretch",
 };
 
-// Free card — white bg, subtle border
 const cardFree: React.CSSProperties = {
   flex: 1,
   maxWidth: "400px",
@@ -62,7 +55,6 @@ const cardFree: React.CSSProperties = {
   flexDirection: "column" as const,
 };
 
-// Pro card — dark green gradient
 const cardPro: React.CSSProperties = {
   flex: 1,
   maxWidth: "400px",
@@ -77,7 +69,6 @@ const cardPro: React.CSSProperties = {
   position: "relative" as const,
 };
 
-// Most popular badge — gold/accent
 const badge: React.CSSProperties = {
   position: "absolute",
   top: theme.spacing[4],
@@ -92,7 +83,6 @@ const badge: React.CSSProperties = {
   textTransform: "uppercase" as const,
 };
 
-// Plan name — dark
 const planName: React.CSSProperties = {
   fontFamily: theme.fonts.display,
   fontSize: theme.fontSizes.xl,
@@ -101,13 +91,11 @@ const planName: React.CSSProperties = {
   marginBottom: theme.spacing[1],
 };
 
-// Plan name — white (pro)
 const planNameWhite: React.CSSProperties = {
   ...planName,
   color: theme.colors.white,
 };
 
-// Price — dark
 const price: React.CSSProperties = {
   fontFamily: theme.fonts.mono,
   fontSize: "2.25rem",
@@ -116,13 +104,11 @@ const price: React.CSSProperties = {
   marginBottom: theme.spacing[1],
 };
 
-// Price — white (pro)
 const priceWhite: React.CSSProperties = {
   ...price,
   color: theme.colors.white,
 };
 
-// Period — grey
 const period: React.CSSProperties = {
   fontFamily: theme.fonts.body,
   fontSize: theme.fontSizes.sm,
@@ -130,13 +116,11 @@ const period: React.CSSProperties = {
   marginBottom: theme.spacing[6],
 };
 
-// Period — cream (pro)
 const periodCream: React.CSSProperties = {
   ...period,
   color: theme.colors.neutral[100],
 };
 
-// Feature row
 const featureRow: React.CSSProperties = {
   display: "flex",
   alignItems: "center",
@@ -144,20 +128,17 @@ const featureRow: React.CSSProperties = {
   marginBottom: theme.spacing[3],
 };
 
-// Feature text — dark
 const featureText: React.CSSProperties = {
   fontFamily: theme.fonts.body,
   fontSize: theme.fontSizes.sm,
   color: theme.colors.neutral[600],
 };
 
-// Feature text — white (pro)
 const featureTextWhite: React.CSSProperties = {
   ...featureText,
   color: theme.colors.neutral[100],
 };
 
-// Outlined button (free)
 const btnOutline: React.CSSProperties = {
   display: "block",
   width: "100%",
@@ -176,7 +157,6 @@ const btnOutline: React.CSSProperties = {
   transition: theme.transitions.fast,
 };
 
-// White button (pro)
 const btnWhite: React.CSSProperties = {
   ...btnOutline,
   color: theme.colors.primary[900],
@@ -184,7 +164,6 @@ const btnWhite: React.CSSProperties = {
   border: "none",
 };
 
-// ─── Data ───
 const freeFeatures = [
   "5 invoices/month",
   "GST auto-calculation",
@@ -201,92 +180,100 @@ const proFeatures = [
   "Dashboard stats",
 ];
 
-// ─── Responsive CSS ───
 const responsiveCSS = `
   @media (max-width: 640px) {
     .pricing-cards { flex-direction: column !important; align-items: center; }
   }
 `;
 
-// ─── Component ───
 export default function Pricing() {
   return (
     <>
       <style>{responsiveCSS}</style>
-      <section id="pricing" style={section}>
-        <div style={container}>
-          <motion.p
-            style={label}
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4 }}
-          >
-            Pricing
-          </motion.p>
-
-          <motion.h2
-            style={heading}
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4, delay: 0.1 }}
-          >
-            Simple pricing.
-            <br />
-            No surprises.
-          </motion.h2>
-
-          <div className="pricing-cards" style={cardsRow}>
-            {/* Free Card */}
-            <motion.div
-              style={cardFree}
-              initial={{ opacity: 0, y: 24 }}
+      <CursorZone id="pricing">
+        <section id="pricing" style={section}>
+          <div style={container}>
+            <motion.p
+              style={label}
+              initial={{ opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: 0.15 }}
-              whileHover={{ y: -4, transition: { duration: 0.2 } }}
+              transition={{ duration: 0.4 }}
             >
-              <div style={planName}>Free</div>
-              <div style={price}>PKR 0</div>
-              <div style={period}>per month, forever</div>
-              {freeFeatures.map((f) => (
-                <div key={f} style={featureRow}>
-                  <FiCheck size={16} color={theme.colors.success[600]} strokeWidth={3} />
-                  <span style={featureText}>{f}</span>
-                </div>
-              ))}
-              <Link href="/login" style={btnOutline}>
-                Get started free
-              </Link>
-            </motion.div>
+              Pricing
+            </motion.p>
 
-            {/* Pro Card */}
-            <motion.div
-              style={cardPro}
-              initial={{ opacity: 0, y: 24 }}
+            <motion.h2
+              style={heading}
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: 0.25 }}
-              whileHover={{ y: -4, transition: { duration: 0.2 } }}
+              transition={{ duration: 0.4, delay: 0.1 }}
             >
-              <div style={badge}>Most Popular</div>
-              <div style={planNameWhite}>Pro</div>
-              <div style={priceWhite}>PKR 999</div>
-              <div style={periodCream}>per month</div>
-              {proFeatures.map((f) => (
-                <div key={f} style={featureRow}>
-                  <FiCheck size={16} color={theme.colors.success[400]} strokeWidth={3} />
-                  <span style={featureTextWhite}>{f}</span>
-                </div>
-              ))}
-              <Link href="/login" style={btnWhite}>
-                Start Pro — PKR 999/mo
-              </Link>
-            </motion.div>
+              Simple pricing.
+              <br />
+              No surprises.
+            </motion.h2>
+
+            <div className="pricing-cards" style={cardsRow}>
+              {/* Free Card */}
+              <motion.div
+                style={cardFree}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: 0.15 }}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+              >
+                <div style={planName}>Free</div>
+                <div style={price}>PKR 0</div>
+                <div style={period}>per month, forever</div>
+                {freeFeatures.map((f) => (
+                  <div key={f} style={featureRow}>
+                    <FiCheck
+                      size={16}
+                      color={theme.colors.success[600]}
+                      strokeWidth={3}
+                    />
+                    <span style={featureText}>{f}</span>
+                  </div>
+                ))}
+                <Link href="/login" style={btnOutline}>
+                  Get started free
+                </Link>
+              </motion.div>
+
+              {/* Pro Card */}
+              <motion.div
+                style={cardPro}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: 0.25 }}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+              >
+                <div style={badge}>Most Popular</div>
+                <div style={planNameWhite}>Pro</div>
+                <div style={priceWhite}>PKR 999</div>
+                <div style={periodCream}>per month</div>
+                {proFeatures.map((f) => (
+                  <div key={f} style={featureRow}>
+                    <FiCheck
+                      size={16}
+                      color={theme.colors.success[400]}
+                      strokeWidth={3}
+                    />
+                    <span style={featureTextWhite}>{f}</span>
+                  </div>
+                ))}
+                <Link href="/login" style={btnWhite}>
+                  Start Pro — PKR 999/mo
+                </Link>
+              </motion.div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </CursorZone>
     </>
   );
 }
