@@ -106,6 +106,31 @@ CLOUDINARY_API_SECRET=abcdefghijklmnopqrstuvwxyz12345
 
 ---
 
+### 🤖 Google Gemini (AI invoice draft — free tier)
+
+| Variable | Required | Description |
+|---|---|---|
+| `GEMINI_API_KEY` | NO* | Google AI Studio API key for describe → auto-fill |
+| `GEMINI_MODEL` | NO | Model id (default: `gemini-flash-latest`) |
+
+\*Required only if you use **Describe invoice → Auto-fill**. Without it, that feature returns 503; the rest of the app works normally.
+
+**Where to get it:**
+1. Go to [aistudio.google.com/apikey](https://aistudio.google.com/apikey)
+2. Sign in with Google → **Create API key** (free)
+3. Paste into `.env.local`
+
+```
+GEMINI_API_KEY=your-gemini-api-key
+GEMINI_MODEL=gemini-flash-latest
+```
+
+> If Auto-fill shows a free-tier / quota error, set `GEMINI_MODEL=gemini-flash-latest` (or another model that works for your key in AI Studio). Newer keys often have **0 free quota** for older names like `gemini-2.0-flash`.
+
+> Voice input on the invoice form uses the browser Web Speech API — no extra env var.
+
+---
+
 ### 🌐 App Config
 
 | Variable | Required | Description |
@@ -145,6 +170,10 @@ FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nYOUR_PRIVATE_KEY_HERE\n-----E
 CLOUDINARY_CLOUD_NAME=your-cloud-name
 CLOUDINARY_API_KEY=your-api-key
 CLOUDINARY_API_SECRET=your-api-secret
+
+# ─── Google Gemini (AI draft) ──────────────────────────────
+GEMINI_API_KEY=your-gemini-api-key
+GEMINI_MODEL=gemini-flash-latest
 
 # ─── App Config ────────────────────────────────────────────
 NEXT_PUBLIC_APP_URL=http://localhost:3000
