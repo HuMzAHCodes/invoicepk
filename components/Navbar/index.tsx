@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Menu } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import theme from "@/styles/theme";
-import { useCursorContext } from "@/components/CustomCursor/CursorProvider";
+// import { useCursorContext } from "@/components/CustomCursor/CursorProvider";
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -22,7 +22,7 @@ const MOBILE_WIDTH = 768;
 
 export default function Navbar({ onMenuClick }: NavbarProps) {
   const { user } = useAuth();
-  const { smoother } = useCursorContext();
+  // const { smoother } = useCursorContext();
 
   const [isMobile, setIsMobile] = useState(true);
   const [scrolled, setScrolled] = useState(false);
@@ -38,35 +38,23 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  // Scroll progress using ScrollSmoother from context
+  // ★ dashboard has no CursorProvider/ScrollSmoother — track native scroll instead
   useEffect(() => {
-    if (!smoother) return;
-
     const onScroll = () => {
-      setScrolled(smoother.scrollTop() > 10);
+      setScrolled(window.scrollY > 10);
 
-      const docHeight = smoother.content().scrollHeight - window.innerHeight;
+      const docHeight =
+        document.documentElement.scrollHeight - window.innerHeight;
       const percent =
-        docHeight > 0
-          ? Math.round((smoother.scrollTop() / docHeight) * 100)
-          : 0;
+        docHeight > 0 ? Math.round((window.scrollY / docHeight) * 100) : 0;
       setScrollPercent(percent);
     };
 
-    // Initial values
-    setScrolled(smoother.scrollTop() > 10);
-    const docHeight = smoother.content().scrollHeight - window.innerHeight;
-    setScrollPercent(
-      docHeight > 0 ? Math.round((smoother.scrollTop() / docHeight) * 100) : 0,
-    );
+    onScroll(); // initial values
+    window.addEventListener("scroll", onScroll, { passive: true });
 
-    // Listen to ScrollSmoother's scroll event
-    smoother.addEventListener("scroll", onScroll);
-
-    return () => {
-      smoother.removeEventListener("scroll", onScroll);
-    };
-  }, [smoother]);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const displayName = user?.displayName ?? "User";
   const initial = displayName.charAt(0).toUpperCase();
@@ -211,11 +199,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
 `;
 
   const scrollToTop = () => {
-    if (smoother) {
-      smoother.scrollTo(0, { duration: 1, ease: "power2.out" });
-    } else {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   // ─── Render ────────────────────────────────────────────────────────────
