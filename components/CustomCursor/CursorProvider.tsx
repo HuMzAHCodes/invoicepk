@@ -72,6 +72,7 @@ export function CursorProvider({
 
   // Track which target sections are in viewport
   useEffect(() => {
+    const sectionStates = new Map<string, boolean>();
     const observerMap = new Map<string, IntersectionObserver>();
 
     targetIds.forEach((id) => {
@@ -81,11 +82,10 @@ export function CursorProvider({
       const observer = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              setIsActive(true);
-            } else {
-              setIsActive(false);
-            }
+            sectionStates.set(id, entry.isIntersecting);
+            // Active if ANY target section is intersecting
+            const anyActive = Array.from(sectionStates.values()).some((v) => v);
+            setIsActive(anyActive);
           });
         },
         { rootMargin: "100px", threshold: 0.1 },
@@ -106,16 +106,21 @@ export function CursorProvider({
 
   const unregisterSection = (id: string) => {};
 
+  // Remove: {isActive && <BlobCursor />}
+  // Just render children:
+  // In the return statement, replace lines 109-119:
   return (
-    <div ref={wrapperRef} id="smooth-wrapper">
-      <div ref={contentRef} id="smooth-content">
-        <CursorContext.Provider
-          value={{ isActive, registerSection, unregisterSection }}
-        >
-          {children}
-        </CursorContext.Provider>
-        {isActive && <BlobCursor />}
+    <>
+      <div ref={wrapperRef} id="smooth-wrapper">
+        <div ref={contentRef} id="smooth-content">
+          <CursorContext.Provider
+            value={{ isActive, registerSection, unregisterSection }}
+          >
+            {children}
+          </CursorContext.Provider>
+        </div>
       </div>
-    </div>
+      {isActive && <BlobCursor isActive={isActive} />}
+    </>
   );
 }
