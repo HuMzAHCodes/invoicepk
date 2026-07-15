@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Menu } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import theme from "@/styles/theme";
-import { ScrollSmoother } from "gsap/ScrollSmoother";
+import { useCursorContext } from "@/components/CustomCursor/CursorProvider";
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -22,6 +22,7 @@ const MOBILE_WIDTH = 768;
 
 export default function Navbar({ onMenuClick }: NavbarProps) {
   const { user } = useAuth();
+  const { smoother } = useCursorContext();
 
   const [isMobile, setIsMobile] = useState(true);
   const [scrolled, setScrolled] = useState(false);
@@ -37,24 +38,13 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  // Scroll progress using ScrollSmoother (not window.scrollY)
+  // Scroll progress using ScrollSmoother from context
   useEffect(() => {
-    let smoother: any = null;
-    const initSmoother = () => {
-      smoother = ScrollSmoother.get();
-    };
-    const timer = setInterval(() => {
-      const s = ScrollSmoother.get();
-      if (s) {
-        clearInterval(timer);
-        smoother = s;
-        smoother.addEventListener("scroll", onScroll);
-      }
-    }, 100);
+    if (!smoother) return;
 
     const onScroll = () => {
-      if (!smoother) return;
       setScrolled(smoother.scrollTop() > 10);
+
       const docHeight = smoother.content().scrollHeight - window.innerHeight;
       const percent =
         docHeight > 0
@@ -63,12 +53,20 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
       setScrollPercent(percent);
     };
 
-    initSmoother();
+    // Initial values
+    setScrolled(smoother.scrollTop() > 10);
+    const docHeight = smoother.content().scrollHeight - window.innerHeight;
+    setScrollPercent(
+      docHeight > 0 ? Math.round((smoother.scrollTop() / docHeight) * 100) : 0,
+    );
+
+    // Listen to ScrollSmoother's scroll event
+    smoother.addEventListener("scroll", onScroll);
+
     return () => {
-      clearInterval(timer);
-      if (smoother) smoother.removeEventListener("scroll", onScroll);
+      smoother.removeEventListener("scroll", onScroll);
     };
-  }, []);
+  }, [smoother]);
 
   const displayName = user?.displayName ?? "User";
   const initial = displayName.charAt(0).toUpperCase();
@@ -155,220 +153,600 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
     maxWidth: "160px",
   };
 
+  // ─── Scroll Progress Styles ────────────────────────────────────────────
+
+  // SVG circle values
+  const radius = 30;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (scrollPercent / 100) * circumference;
+
+  // Scroll progress line — bottom of navbar
+  const progressLineBg: React.CSSProperties = {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: "3px",
+    backgroundColor: "transparent",
+  };
+
+  const progressLineFill: React.CSSProperties = {
+    height: "100%",
+    backgroundColor: theme.colors.primary[600],
+    transition: "width 0.15s ease",
+    borderRadius: "0 2px 2px 0",
+  };
+
+  // Scroll progress circle — fixed bottom-right
+  const progressWrap: React.CSSProperties = {
+    position: "fixed",
+    bottom: theme.spacing[6],
+    right: theme.spacing[6],
+    width: "72px",
+    height: "72px",
+    zIndex: 200,
+    cursor: "pointer",
+  };
+
+  // Progress text inside circle
+  const progressText: React.CSSProperties = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    fontFamily: theme.fonts.mono,
+    fontSize: "0.75rem",
+    fontWeight: theme.fontWeights.bold,
+    color: theme.colors.primary[600],
+    pointerEvents: "none",
+  };
+
+  // Responsive CSS
+  const responsiveCSS = `
+  @media (max-width: 768px) {
+    .landing-center-links { display: none !important; }
+    .landing-desktop-links { display: none !important; }
+    .landing-hamburger { display: flex !important; }
+  }
+`;
+
+  const scrollToTop = () => {
+    if (smoother) {
+      smoother.scrollTo(0, { duration: 1, ease: "power2.out" });
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   // ─── Render ────────────────────────────────────────────────────────────
 
   return (
-    <header style={navbarStyle}>
-      {/* Left: hamburger (mobile) + wordmark */}
-      <div style={leftGroupStyle}>
-        <button
-          type="button"
-          style={hamburgerStyle}
-          onClick={onMenuClick}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = theme.colors.neutral[50];
-            e.currentTarget.style.color = theme.colors.neutral[900];
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = "transparent";
-            e.currentTarget.style.color = theme.colors.neutral[600];
-          }}
-          aria-label="Toggle sidebar"
-        >
-          <Menu size={20} />
-        </button>
+    <>
+      <style>{responsiveCSS}</style>
+      <header
+        style={{
+          ...navbarStyle,
+          backgroundColor: scrolled
+            ? "rgba(247, 245, 239, 0.85)"
+            : theme.colors.white,
+          backdropFilter: scrolled ? "blur(12px)" : "none",
+          WebkitBackdropFilter: scrolled ? "blur(12px)" : "none",
+          borderBottom: `1px solid ${scrolled ? theme.colors.neutral[200] : "transparent"}`,
+          boxShadow: scrolled ? "0 1px 3px rgba(0,0,0,0.06)" : "none",
+        }}
+      >
+        <div style={leftGroupStyle}>
+          <button
+            type="button"
+            style={hamburgerStyle}
+            onClick={onMenuClick}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = theme.colors.neutral[50];
+              e.currentTarget.style.color = theme.colors.neutral[900];
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "transparent";
+              e.currentTarget.style.color = theme.colors.neutral[600];
+            }}
+            aria-label="Toggle sidebar"
+          >
+            <Menu size={20} />
+          </button>
 
-        <Link href="/dashboard" style={wordmarkStyle}>
-          InvoicePK
-        </Link>
-      </div>
-
-      {/* Right: avatar + username */}
-      <div style={rightGroupStyle}>
-        <span style={usernameStyle}>{displayName}</span>
-        <div style={avatarStyle} aria-hidden="true">
-          {initial}
+          <Link href="/dashboard" style={wordmarkStyle}>
+            InvoicePK
+          </Link>
         </div>
+
+        {/* Right: avatar + username */}
+        <div style={rightGroupStyle}>
+          <span style={usernameStyle}>{displayName}</span>
+          <div style={avatarStyle} aria-hidden="true">
+            {initial}
+          </div>
+        </div>
+      </header>
+
+      {/* Scroll progress line at bottom of navbar */}
+      <div style={progressLineBg}>
+        <div style={{ ...progressLineFill, width: `${scrollPercent}%` }} />
       </div>
-    </header>
+
+      {/* Scroll progress circle */}
+      <div style={progressWrap} onClick={scrollToTop}>
+        <svg width="72" height="72" viewBox="0 0 72 72">
+          {/* Background circle */}
+          <circle
+            cx="36"
+            cy="36"
+            r={radius}
+            fill={theme.colors.white}
+            stroke={theme.colors.neutral[200]}
+            strokeWidth="3"
+          />
+          {/* Progress arc */}
+          <circle
+            cx="36"
+            cy="36"
+            r={radius}
+            fill="none"
+            stroke={theme.colors.primary[600]}
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeDasharray={circumference}
+            strokeDashoffset={offset}
+            transform="rotate(-90 36 36)"
+            style={{ transition: "stroke-dashoffset 0.15s ease" }}
+          />
+        </svg>
+        <span style={progressText}>{scrollPercent}%</span>
+      </div>
+    </>
   );
 }
 
-// feat(navbar): implement responsive dashboard navigation bar
+// ──────────────────────────────────────────────────────────────────────────────
+// COMMIT 1: Build Responsive Navbar Component
+// ──────────────────────────────────────────────────────────────────────────────
 
-// - Created Navbar component for the dashboard layout.
-// - Accepts `onMenuClick` callback through props to allow parent components
-//   to control sidebar visibility instead of managing sidebar state internally.
-// - Uses CSS-in-JS (React.CSSProperties) to keep component styles colocated
-//   with the component logic.
-// - Layout consists of:
-//   • Left section:
-//       - Mobile hamburger button
-//       - InvoicePK wordmark linked to /dashboard
-//   • Right section:
-//       - Logged-in user's name
-//       - Circular avatar displaying the first letter of the user's name
-// - Navbar uses `position: sticky` so it remains visible while scrolling.
-
-// feat(auth): connect navbar with authentication context
-
-// - Integrated `useAuth()` hook.
-// - Reads authenticated user information from global Auth Context.
-// - Displays:
-//     - displayName if available
-//     - "User" as fallback when displayName is unavailable.
-// - Generates avatar initials dynamically by extracting the first character
-//   of the display name and converting it to uppercase.
-
-// Logic:
-// Instead of passing user data through props, the component consumes
-// authentication state directly from the shared context, allowing every
-// component in the application to access the same authenticated user.
-
-// feat(responsive): detect viewport size using React useEffect
-
-// Implemented responsive layout detection.
-
-// Logic:
-// - Created `isMobile` state.
-// - Defined MOBILE_WIDTH constant (768px).
-// - On component mount:
-//       window.innerWidth is checked.
-// - A resize event listener is attached.
-// - Whenever the browser width changes:
-//       check() executes again.
-//       isMobile updates automatically.
-
-// Cleanup:
-// - Removed resize event listener inside the useEffect cleanup function
-//   to prevent memory leaks after component unmounts.
+// feat(navbar): create responsive dashboard navigation component
 
 // Purpose:
-// This allows the component to:
-// - Show hamburger menu only on mobile devices.
-// - Hide username on smaller screens.
-// - Update layout instantly whenever the browser is resized.
+// - Created a reusable Navbar component that serves as the top navigation
+//   bar throughout the dashboard.
 
-// feat(scroll): synchronize navbar with GSAP ScrollSmoother
+// Structure:
+// - Left Section
+//     • Hamburger menu (mobile only)
+//     • InvoicePK logo linking back to the dashboard
 
-// Integrated GSAP ScrollSmoother instead of relying on native
-// window.scrollY.
+// - Right Section
+//     • Logged-in user's display name
+//     • Circular avatar containing the user's first initial
+
+// Props:
+// - Receives `onMenuClick()` from the parent component.
+// - Instead of opening/closing the sidebar itself, the Navbar delegates
+//   this responsibility to its parent, keeping the component reusable and
+//   following React's unidirectional data flow.
+
+// Design:
+// - Uses `position: sticky` so the navigation remains fixed at the top
+//   while scrolling.
+// - All styling is defined using `React.CSSProperties`, making the file
+//   self-contained and easier to maintain.
+
+// ──────────────────────────────────────────────────────────────────────────────
+// COMMIT 2: Integrate Authentication Context
+// ──────────────────────────────────────────────────────────────────────────────
+
+// feat(auth): display authenticated user information
+
+// Integrated the global authentication context using:
+
+//     useAuth()
+
+// Purpose:
+// - Retrieves the currently authenticated Firebase user.
+// - Displays the user's displayName.
+// - Falls back to "User" if no display name exists.
+
+// Avatar Logic:
+// - Extracts the first character of displayName.
+// - Converts it to uppercase.
+// - Uses that character as the avatar label.
 
 // Reason:
-// ScrollSmoother creates a virtual scrolling system where
-// window.scrollY no longer represents the actual visual scroll position.
+// Instead of passing user information through multiple component levels
+// (prop drilling), React Context provides global access to authentication
+// data from anywhere in the application.
 
-// Implementation:
-// - Periodically checks whether ScrollSmoother has been initialized.
-// - Once available:
-//       ScrollSmoother.get()
-//       returns the active smoother instance.
-// - Registers a custom scroll listener.
+// ──────────────────────────────────────────────────────────────────────────────
+// COMMIT 3: Integrate ScrollSmoother through Context
+// ──────────────────────────────────────────────────────────────────────────────
 
-// On every scroll:
-// - Determines whether page has been scrolled more than 10px.
-// - Calculates current scroll percentage:
-//       currentScroll / totalScrollableHeight
-// - Updates:
-//       scrolled state
-//       scrollPercent state
+// feat(scroll): consume GSAP ScrollSmoother from Cursor Context
 
-// Cleanup:
-// - Removes ScrollSmoother event listener.
-// - Clears interval timer when component unmounts.
+// Integrated
 
-// docs(navbar): document useEffect lifecycle
+//     useCursorContext()
 
-// This component contains two independent useEffect hooks.
+// instead of directly creating or searching for a ScrollSmoother instance.
 
-// First useEffect:
 // Purpose:
-// - Detect current screen size.
-// - Listen for browser resize events.
-// - Keep `isMobile` synchronized with viewport width.
-
-// Lifecycle:
-// Mount
-//     ↓
-// Run check()
-//     ↓
-// Attach resize listener
-//     ↓
-// Update state whenever browser width changes
-//     ↓
-// Remove listener during cleanup
-
-// Second useEffect:
-// Purpose:
-// - Wait until GSAP ScrollSmoother exists.
-// - Attach scroll listener.
-// - Track page scroll progress.
-
-// Lifecycle:
-// Mount
-//     ↓
-// Repeatedly check ScrollSmoother availability
-//     ↓
-// Once available:
-// Attach scroll listener
-//     ↓
-// Update scroll state while scrolling
-//     ↓
-// Remove listener on unmount
-
-// Reason for separating them:
-// Each useEffect is responsible for one independent side effect,
-// making the component easier to understand and maintain.
-
-// refactor(styles): centralize component styling
-
-// Moved all inline styles into reusable React.CSSProperties objects.
+// - Retrieves the already initialized ScrollSmoother instance.
+// - Ensures every component shares the same scrolling engine.
+// - Prevents multiple ScrollSmoother instances from being created.
 
 // Benefits:
-// - Styles become easier to locate and modify.
-// - Reduces repeated object creation inside JSX.
-// - Improves readability by separating presentation from markup.
-// - Uses shared design tokens from the global theme object:
-//     - colors
-//     - spacing
-//     - fonts
-//     - border radius
-//     - transitions
+// - Centralized scroll management.
+// - Better separation of responsibilities.
+// - Easier debugging.
+// - Consistent smooth scrolling throughout the application.
 
-// This ensures the Navbar remains visually consistent with the rest
-// of the application.
+// ──────────────────────────────────────────────────────────────────────────────
+// COMMIT 4: Responsive Screen Detection using useEffect
+// ──────────────────────────────────────────────────────────────────────────────
 
-// feat(ui): conditionally render desktop and mobile navigation
+// feat(responsive): automatically detect mobile and desktop layouts
 
-// Implemented conditional rendering based on screen size.
+// Created a responsive detection system using React's useEffect.
 
-// Mobile:
-// - Hamburger menu visible.
-// - Username hidden.
-// - Avatar visible.
+// Logic:
 
-// Desktop:
-// - Hamburger menu hidden.
-// - Username displayed.
-// - Avatar displayed.
+// State:
+//     isMobile
 
-// Conditional rendering is achieved by updating styles using the
-// `isMobile` state instead of mounting and unmounting entire components,
-// keeping rendering logic simple and efficient.
+// Constant:
+//     MOBILE_WIDTH = 768
 
-// feat(interactions): add hover feedback for mobile menu button
+// Workflow:
 
-// Added hover interactions for the hamburger menu.
+// Component Mount
+//         ↓
+// check() executes
+//         ↓
+// window.innerWidth is read
+//         ↓
+// isMobile becomes true/false
+//         ↓
+// Resize listener is attached
+//         ↓
+// Whenever browser width changes
+//         ↓
+// check() executes again
+//         ↓
+// Navbar instantly adapts
 
-// Behavior:
-// - Mouse Enter:
-//       background becomes neutral[50]
-//       icon color changes to neutral[900]
+// Cleanup:
+// When the component unmounts,
+// the resize event listener is removed.
 
-// - Mouse Leave:
-//       restores transparent background
-//       restores neutral icon color
+// Reason:
+// Without cleanup, React components may leave unused event listeners in
+// memory, resulting in memory leaks and unnecessary event executions.
+
+// ──────────────────────────────────────────────────────────────────────────────
+// COMMIT 5: Track Scroll Position using useEffect
+// ──────────────────────────────────────────────────────────────────────────────
+
+// feat(scroll): synchronize navbar with GSAP scrolling
+
+// A second useEffect is responsible for monitoring page scrolling.
+
+// Dependency:
+
+//     [smoother]
+
+// Meaning:
+// This effect runs only when the ScrollSmoother instance becomes available
+// or changes.
+
+// Workflow:
+
+// Component Mount
+//         ↓
+// Check if smoother exists
+//         ↓
+// If unavailable:
+// Return immediately
+//         ↓
+// If available:
+// Register Scroll Event
+//         ↓
+// User Scrolls
+//         ↓
+// onScroll() executes
+//         ↓
+// Updates:
+//     • scrolled
+//     • scrollPercent
+
+// Cleanup:
+// Removes the scroll listener whenever:
+
+// - component unmounts
+// - smoother instance changes
+
+// Reason:
+// Prevents duplicated listeners and unnecessary event execution.
+
+// ──────────────────────────────────────────────────────────────────────────────
+// COMMIT 6: Implement Scroll Percentage Calculation
+// ──────────────────────────────────────────────────────────────────────────────
+
+// feat(progress): calculate live scroll progress
+
+// Every scroll event calculates how far the user has travelled through the
+// page.
+
+// Formula:
+
+// Scrollable Height
+
+//     contentHeight - viewportHeight
+
+// Percentage
+
+//     currentScroll / totalScrollableHeight × 100
+
+// Result:
+
+// scrollPercent
+
+// stores values between
+
+// 0 → 100
+
+// This percentage drives:
+
+// • Progress bar
+// • Circular progress indicator
+// • Scroll percentage text
+
+// Using ScrollSmoother instead of window.scrollY ensures the values remain
+// accurate because GSAP replaces the browser's native scrolling.
+
+// ──────────────────────────────────────────────────────────────────────────────
+// COMMIT 7: Dynamic Navbar Appearance
+// ──────────────────────────────────────────────────────────────────────────────
+
+// feat(ui): animate navbar based on scroll position
+
+// Introduced a dynamic appearance controlled by the
+
+//     scrolled
+
+// state.
+
+// Before scrolling:
+// - White background
+// - Transparent border
+// - No shadow
+// - No blur
+
+// After scrolling more than 10 pixels:
+// - Semi-transparent background
+// - Glassmorphism blur effect
+// - Bottom border
+// - Soft drop shadow
 
 // Purpose:
-// Provides immediate visual feedback during user interaction without
-// requiring additional CSS files.
+// Provides better visual separation between the navigation bar and page
+// content while maintaining a modern UI.
+
+// ──────────────────────────────────────────────────────────────────────────────
+// COMMIT 8: Build Scroll Progress Indicator
+// ──────────────────────────────────────────────────────────────────────────────
+
+// feat(progress): add top progress line and circular progress widget
+
+// Implemented two independent scroll indicators.
+
+// 1. Progress Line
+// ----------------
+
+// Located directly beneath the navbar.
+
+// Width:
+
+// scrollPercent %
+
+// As the user scrolls,
+// the line gradually expands from left to right.
+
+// 2. Circular Progress Indicator
+// ------------------------------
+
+// Located in the bottom-right corner.
+
+// Components:
+
+// • SVG background circle
+// • SVG animated progress arc
+// • Percentage text
+
+// Purpose:
+// Allows users to instantly understand how much of the page has been
+// viewed.
+
+// ──────────────────────────────────────────────────────────────────────────────
+// COMMIT 9: Implement SVG Circular Progress Logic
+// ──────────────────────────────────────────────────────────────────────────────
+
+// feat(svg): generate animated circular progress using stroke calculations
+
+// The circular progress uses SVG mathematics.
+
+// Radius
+
+//     30
+
+// Circumference
+
+//     2 × π × radius
+
+// Dash Offset
+
+//     circumference -
+//     (scrollPercent / 100 × circumference)
+
+// How it works:
+
+// 0%
+// Entire circle hidden.
+
+// 50%
+// Half of the stroke becomes visible.
+
+// 100%
+// Entire circle is drawn.
+
+// The circle begins from the top using
+
+// transform:
+
+// rotate(-90deg)
+
+// instead of the SVG default starting position on the right.
+
+// ──────────────────────────────────────────────────────────────────────────────
+// COMMIT 10: Scroll-to-Top Functionality
+// ──────────────────────────────────────────────────────────────────────────────
+
+// feat(interaction): allow users to return to the top smoothly
+
+// Implemented
+
+// scrollToTop()
+
+// Behavior:
+
+// If ScrollSmoother exists:
+
+// Uses
+
+// smoother.scrollTo()
+
+// with
+
+// Duration:
+//     1 second
+
+// Ease:
+//     power2.out
+
+// Otherwise:
+
+// Falls back to
+
+// window.scrollTo()
+
+// using the browser's native smooth scrolling.
+
+// Purpose:
+// Provides a consistent smooth scrolling experience regardless of whether
+// GSAP is available.
+
+// ──────────────────────────────────────────────────────────────────────────────
+// COMMIT 11: Responsive Rendering Logic
+// ──────────────────────────────────────────────────────────────────────────────
+
+// feat(ui): conditionally render navigation elements
+
+// Desktop Layout
+
+// ✓ Username visible
+// ✓ Avatar visible
+// ✗ Hamburger hidden
+
+// Mobile Layout
+
+// ✓ Hamburger visible
+// ✓ Avatar visible
+// ✗ Username hidden
+
+// The responsive layout is controlled through
+
+// isMobile
+
+// instead of rendering completely different components.
+
+// Benefits:
+// - Less duplicated JSX
+// - Simpler rendering logic
+// - Easier maintenance
+
+// ──────────────────────────────────────────────────────────────────────────────
+// COMMIT 12: Organize Styles and Theme Integration
+// ──────────────────────────────────────────────────────────────────────────────
+
+// refactor(styles): centralize component styling using theme tokens
+
+// All visual styling references the global theme object.
+
+// Examples:
+
+// theme.colors
+// theme.spacing
+// theme.fonts
+// theme.radius
+// theme.transitions
+
+// Advantages:
+
+// - Consistent design language
+// - Easy theme customization
+// - Reduced hardcoded values
+// - Better scalability
+// - Improved maintainability
+
+// Every style object is defined before rendering, keeping JSX focused
+// primarily on structure rather than presentation.
+
+// ──────────────────────────────────────────────────────────────────────────────
+// COMMIT 13: Explain Overall Component Lifecycle
+// ──────────────────────────────────────────────────────────────────────────────
+
+// docs(navbar): document complete component execution flow
+
+// Overall Lifecycle
+
+// Component Mount
+//         ↓
+// Load authenticated user
+//         ↓
+// Retrieve ScrollSmoother from Context
+//         ↓
+// Detect current screen size
+//         ↓
+// Register resize listener
+//         ↓
+// Register scroll listener
+//         ↓
+// Render navbar
+//         ↓
+// User Scrolls
+//         ↓
+// Update:
+//     • scrolled
+//     • scrollPercent
+//         ↓
+// Progress line expands
+//         ↓
+// Circular progress updates
+//         ↓
+// Navbar background animates
+//         ↓
+// User clicks progress circle
+//         ↓
+// Smooth scroll back to top
+//         ↓
+// Component Unmount
+//         ↓
+// Remove resize listener
+// Remove scroll listener
+
+// This separation of responsibilities follows React best practices,
+// where each useEffect manages one independent side effect, making the
+// component easier to understand, test, and maintain.
