@@ -191,7 +191,7 @@ export default function Pricing() {
     <>
       <style>{responsiveCSS}</style>
       <CursorZone id="pricing">
-        <section id="pricing" style={section}>
+        <section style={section}>
           <div style={container}>
             <motion.p
               style={label}

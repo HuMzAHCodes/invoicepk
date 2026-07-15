@@ -1,3 +1,4 @@
+// components/Landing/Navbar/index.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -8,6 +9,8 @@ import Logo from "./Logo";
 import CenterLinks from "./CenterLinks";
 import DesktopLinks from "./DesktopLinks";
 import MobileMenu from "./MobileMenu";
+import { useCursorContext } from "@/components/CustomCursor"; // ★
+import { ScrollTrigger } from "gsap/ScrollTrigger"; // ★
 
 // ─── Styles ───
 
@@ -111,30 +114,54 @@ const progressLineFill: React.CSSProperties = {
 
 // ─── Component ───
 export default function Navbar() {
+  const { smoother } = useCursorContext(); // ★
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [scrollPercent, setScrollPercent] = useState(0);
-
+  // ★ ScrollSmoother has no addEventListener API — use ScrollTrigger's
+  //   onUpdate instead, which fires on every scroll tick and integrates
+  //   natively with ScrollSmoother
   useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 10);
+    if (!smoother) return;
 
-      // Calculate scroll percentage
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const percent = docHeight > 0 ? Math.round((window.scrollY / docHeight) * 100) : 0;
+    const updateScrollState = () => {
+      setScrolled(smoother.scrollTop() > 10);
+
+      const docHeight = smoother.content().scrollHeight - window.innerHeight;
+      const percent =
+        docHeight > 0
+          ? Math.round((smoother.scrollTop() / docHeight) * 100)
+          : 0;
       setScrollPercent(percent);
     };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+
+    // Initial values
+    updateScrollState();
+
+    const trigger = ScrollTrigger.create({
+      trigger: document.body,
+      start: 0,
+      end: "max",
+      onUpdate: updateScrollState,
+    });
+
+    return () => {
+      trigger.kill();
+    };
+  }, [smoother]);
 
   // SVG circle values
   const radius = 30;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (scrollPercent / 100) * circumference;
 
+  // ★ scrollToTop now goes through smoother, with a fallback just in case
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (smoother) {
+      smoother.scrollTo(0, { duration: 1, ease: "power2.out" });
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   return (
@@ -144,7 +171,9 @@ export default function Navbar() {
         style={{
           ...nav,
           position: "sticky",
-          backgroundColor: scrolled ? "rgba(247, 245, 239, 0.85)" : theme.colors.neutral[50],
+          backgroundColor: scrolled
+            ? "rgba(247, 245, 239, 0.85)"
+            : theme.colors.neutral[50],
           backdropFilter: scrolled ? "blur(12px)" : "none",
           WebkitBackdropFilter: scrolled ? "blur(12px)" : "none",
           borderBottom: `1px solid ${scrolled ? theme.colors.neutral[200] : "transparent"}`,
@@ -186,7 +215,6 @@ export default function Navbar() {
       {/* Scroll progress circle */}
       <div style={progressWrap} onClick={scrollToTop}>
         <svg width="72" height="72" viewBox="0 0 72 72">
-          {/* Background circle */}
           <circle
             cx="36"
             cy="36"
@@ -195,7 +223,6 @@ export default function Navbar() {
             stroke={theme.colors.neutral[200]}
             strokeWidth="3"
           />
-          {/* Progress arc */}
           <circle
             cx="36"
             cy="36"

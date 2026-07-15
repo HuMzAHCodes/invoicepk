@@ -107,7 +107,7 @@ export default function FAQ() {
 
   return (
     <CursorZone id="faq">
-      <section id="faq" style={section}>
+      <section style={section}>
         <div style={container}>
           <motion.p
             style={label}
