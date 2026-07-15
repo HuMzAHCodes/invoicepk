@@ -4,10 +4,10 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 
 interface BlobCursorProps {
-  color?: string;
+  isActive?: boolean;
 }
 
-export default function BlobCursor({ color = "#4B8867" }: BlobCursorProps) {
+export default function BlobCursor({ isActive = false }: BlobCursorProps) {
   const cursorRef = useRef<HTMLDivElement>(null);
 
   const mouse = { x: -9999, y: -9999 };
@@ -50,18 +50,24 @@ export default function BlobCursor({ color = "#4B8867" }: BlobCursorProps) {
 
     gsap.ticker.add(tick);
 
-    cursor.style.setProperty("--cursor-color", "#4B8867");
+    // Hide default cursor when active
+    if (isActive) {
+      document.body.classList.add("cursor-active");
+      document.documentElement.classList.add("cursor-active");
+    }
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       gsap.ticker.remove(tick);
+      document.body.classList.remove("cursor-active");
+      document.documentElement.classList.remove("cursor-active");
     };
-  }, []);
+  }, [isActive]);
 
   return (
     <div
       ref={cursorRef}
-      className="blob-cursor"
+      className={`blob-cursor ${isActive ? "visible" : ""}`}
       aria-hidden="true"
       style={{ pointerEvents: "none", zIndex: 9999 }}
     />

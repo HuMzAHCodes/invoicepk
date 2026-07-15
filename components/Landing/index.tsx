@@ -1,3 +1,4 @@
+// components/Landing/index.tsx
 import Navbar from "./Navbar";
 import Hero from "./Hero";
 import HowItWorks from "./HowItWorks";
@@ -5,7 +6,7 @@ import FAQ from "./FAQ";
 import Pricing from "./Pricing";
 import CTABanner from "./CTABanner";
 import Footer from "./Footer";
-import { CursorProvider } from "@/components/CustomCursor";
+import { CursorProvider, BlobCursor } from "@/components/CustomCursor";
 
 export default function Landing() {
   return (
@@ -17,6 +18,8 @@ export default function Landing() {
       <Pricing />
       <CTABanner />
       <Footer />
+      {/* Cursor rendered OUTSIDE smooth-wrapper */}
+      <BlobCursor />
     </CursorProvider>
   );
 }
