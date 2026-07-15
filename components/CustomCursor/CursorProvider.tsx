@@ -1,3 +1,4 @@
+// components/CustomCursor/CursorProvider.tsx
 "use client";
 
 import {
@@ -17,6 +18,7 @@ gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
 interface CursorContextType {
   isActive: boolean;
+  smoother: any; // ★ exposed so descendants (e.g. Navbar/CenterLinks) can call smoother.scrollTo(...)
   registerSection: (id: string, element: HTMLElement) => () => void;
   unregisterSection: (id: string) => void;
 }
@@ -30,17 +32,13 @@ export function useCursorContext() {
   return ctx;
 }
 
-interface ActiveSection {
-  id: string;
-  element: HTMLElement;
-  observer: IntersectionObserver;
-}
-
 export function CursorProvider({
   children,
+  sticky, // ★ new — rendered outside #smooth-content, but still inside CursorContext.Provider
   targetIds = ["how-it-works", "faq", "pricing"],
 }: {
   children: ReactNode;
+  sticky?: ReactNode; // ★
   targetIds?: string[];
 }) {
   const [isActive, setIsActive] = useState(false);
@@ -52,7 +50,7 @@ export function CursorProvider({
   useEffect(() => {
     if (!wrapperRef.current || !contentRef.current) return;
 
-    const smoother = ScrollSmoother.create({
+    const smootherInstance = ScrollSmoother.create({
       wrapper: wrapperRef.current,
       content: contentRef.current,
       smooth: 1.5,
@@ -62,10 +60,10 @@ export function CursorProvider({
       ignoreMobileResize: true,
     });
 
-    setSmoother(smoother);
+    setSmoother(smootherInstance);
 
     return () => {
-      smoother.kill();
+      smootherInstance.kill();
       ScrollTrigger.getAll().forEach((t) => t.kill());
     };
   }, []);
@@ -106,21 +104,20 @@ export function CursorProvider({
 
   const unregisterSection = (id: string) => {};
 
-  // Remove: {isActive && <BlobCursor />}
-  // Just render children:
-  // In the return statement, replace lines 109-119:
   return (
-    <>
+    <CursorContext.Provider
+      value={{ isActive, smoother, registerSection, unregisterSection }} // ★ smoother added
+    >
+      {/* ★ sticky content — outside the transformed wrapper, so position:sticky works,
+             but still a context descendant so useCursorContext() is valid here */}
+      {sticky}
+
       <div ref={wrapperRef} id="smooth-wrapper">
         <div ref={contentRef} id="smooth-content">
-          <CursorContext.Provider
-            value={{ isActive, registerSection, unregisterSection }}
-          >
-            {children}
-          </CursorContext.Provider>
+          {children}
         </div>
       </div>
       {isActive && <BlobCursor isActive={isActive} />}
-    </>
+    </CursorContext.Provider>
   );
 }

@@ -1,9 +1,11 @@
+// components/Landing/Navbar/CenterLinks/index.tsx
 "use client";
 
 import Link from "next/link";
 import theme from "@/styles/theme";
+import { useCursorContext } from "@/components/CustomCursor";
 
-// ─── Styles ───
+// ─── Styles ────────────────────────────────────────────────────────────────
 
 // Center nav links container
 const container: React.CSSProperties = {
@@ -12,7 +14,8 @@ const container: React.CSSProperties = {
   gap: theme.spacing[8],
 };
 
-// ─── CSS Animation ───
+// ─── CSS Animation ─────────────────────────────────────────────────────────
+
 const hoverCSS = `
   .nav-link {
     position: relative;
@@ -55,29 +58,60 @@ const hoverCSS = `
   }
 `;
 
-// ─── Data ───
+// ─── Data ──────────────────────────────────────────────────────────────────
+
 const links = [
   { label: "About Us", href: "#faq", isAnchor: true },
   { label: "How it Works", href: "#how-it-works", isAnchor: true },
   { label: "Invoices", href: "/dashboard", isAnchor: false },
 ];
 
-// ─── Component ───
+// ─── Component ─────────────────────────────────────────────────────────────
+
 export default function CenterLinks() {
+  const { smoother } = useCursorContext();
+
+  // Handle same-page anchor navigation using GSAP ScrollSmoother
+  const handleAnchorClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string,
+  ) => {
+    e.preventDefault();
+
+    const id = href.replace("#", "");
+    const target = document.getElementById(id);
+
+    if (!target) return;
+
+    if (smoother) {
+      smoother.scrollTo(target, true, "top top");
+    } else {
+      target.scrollIntoView({
+        behavior: "smooth",
+      });
+    }
+  };
+
   return (
     <>
       <style>{hoverCSS}</style>
+
       <div style={container}>
         {links.map((l) =>
           l.isAnchor ? (
-            <a key={l.label} href={l.href} className="nav-link">
+            <a
+              key={l.label}
+              href={l.href}
+              className="nav-link"
+              onClick={(e) => handleAnchorClick(e, l.href)}
+            >
               {l.label}
             </a>
           ) : (
             <Link key={l.label} href={l.href} className="nav-link">
               {l.label}
             </Link>
-          )
+          ),
         )}
       </div>
     </>

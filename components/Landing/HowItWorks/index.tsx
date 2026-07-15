@@ -143,7 +143,7 @@ export default function HowItWorks() {
     <>
       <style>{responsiveCSS}</style>
       <CursorZone id="how-it-works">
-        <section id="how-it-works" style={section}>
+        <section style={section}>
           <div style={container}>
             <motion.p
               style={label}
