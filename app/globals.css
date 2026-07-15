@@ -72,7 +72,7 @@ html {
 
 
 
-/* Blob Cursor - Footer green (#4B8867) */
+/* Blob Cursor - Darkest green (primary[900] = #0F2E1F) */
 .blob-cursor {
   position: fixed;
   top: 0;
@@ -80,8 +80,9 @@ html {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  border: 2px solid var(--cursor-color, #4B8867);
-  background: transparent;
+  /* FILLED circle - no border */
+  background: var(--cursor-color, #0F2E1F);
+  border: none;
   pointer-events: none;
   z-index: 9999;
   transform: translate(-50%, -50%);
@@ -94,15 +95,57 @@ html {
   opacity: 1;
 }
 
+/* Hover state - slight scale + subtle glow */
 .blob-cursor.hover {
   width: 48px;
   height: 48px;
-  background: rgba(75, 136, 103, 0.12);
-  border-width: 3px;
+  box-shadow: 0 0 20px rgba(15, 46, 31, 0.4);
 }
 
+/* Hide default cursor when custom cursor is active */
+html.cursor-active,
+body.cursor-active {
+  cursor: none !important;
+}
+
+/* Mobile / touch / reduced motion - hide custom cursor */
 @media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
   .blob-cursor {
     display: none !important;
   }
+  html.cursor-active,
+  body.cursor-active {
+    cursor: auto !important;
+  }
+}
+
+
+
+
+
+
+
+
+/* ... existing blob-cursor styles ... */
+
+/* Force hide default cursor on interactive elements */
+html.cursor-active *,
+body.cursor-active * {
+  cursor: none !important;
+}
+
+/* Allow text selection in inputs */
+html.cursor-active input,
+html.cursor-active textarea,
+html.cursor-active [contenteditable] {
+  cursor: text !important;
+}
+
+/* Ensure buttons/links are clickable but show custom cursor */
+html.cursor-active button,
+html.cursor-active a[href],
+html.cursor-active [role="button"],
+html.cursor-active [role="link"],
+html.cursor-active [tabindex]:not([tabindex="-1"]) {
+  cursor: none !important;
 }

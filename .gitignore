@@ -47,3 +47,6 @@ InvoicePK_Frontend_Developer
 files
 FRONTEND_UI_SPEC
 LANDING_PAGE_SPEC
+
+# local-only documentation (do not publish to GitHub)
+/docs/
