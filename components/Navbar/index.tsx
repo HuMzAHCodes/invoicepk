@@ -251,15 +251,15 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
         </div>
       </header>
 
-      {/* Scroll progress line at bottom of navbar */}
+      {/* Scroll progress line at bottom of navbar
       <div style={progressLineBg}>
         <div style={{ ...progressLineFill, width: `${scrollPercent}%` }} />
-      </div>
+      </div> */}
 
       {/* Scroll progress circle */}
-      <div style={progressWrap} onClick={scrollToTop}>
+      {/* <div style={progressWrap} onClick={scrollToTop}>
         <svg width="72" height="72" viewBox="0 0 72 72">
-          {/* Background circle */}
+          Background circle
           <circle
             cx="36"
             cy="36"
@@ -268,7 +268,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
             stroke={theme.colors.neutral[200]}
             strokeWidth="3"
           />
-          {/* Progress arc */}
+          Progress arc
           <circle
             cx="36"
             cy="36"
@@ -284,7 +284,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
           />
         </svg>
         <span style={progressText}>{scrollPercent}%</span>
-      </div>
+      </div> */}
     </>
   );
 }
