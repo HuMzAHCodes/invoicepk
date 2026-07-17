@@ -238,7 +238,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
             <Menu size={20} />
           </button>
 
-          <Link href="/dashboard" style={wordmarkStyle}>
+          <Link href="/" style={wordmarkStyle}>
             InvoicePK
           </Link>
         </div>
