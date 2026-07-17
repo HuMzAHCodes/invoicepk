@@ -3,6 +3,135 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Theme colors - Light mode */
+  --primary-50: #E8F0EA;
+  --primary-200: #A9C9B4;
+  --primary-400: #4B8867;
+  --primary-600: #1F5C3F;
+  --primary-900: #0F2E1F;
+
+  --accent-50: #FBF3E6;
+  --accent-200: #E9C98C;
+  --accent-400: #CBA05A;
+  --accent-600: #B8863B;
+  --accent-900: #5C431D;
+
+  --success-50: #EAF5EC;
+  --success-200: #A8D9B4;
+  --success-400: #5CB975;
+  --success-600: #2F8F4E;
+  --success-900: #163A22;
+
+  --warning-50: #FBF1DF;
+  --warning-200: #EFCB8A;
+  --warning-400: #DE9F3E;
+  --warning-600: #B87A1E;
+  --warning-900: #5C3D0F;
+
+  --danger-50: #FBEAEA;
+  --danger-200: #E9A8A8;
+  --danger-400: #D66565;
+  --danger-600: #B23333;
+  --danger-900: #591919;
+
+  --neutral-50: #F7F5EF;
+  --neutral-100: #F0EAE0;
+  --neutral-200: #DEDACB;
+  --neutral-400: #A8A395;
+  --neutral-600: #6E6A5D;
+  --neutral-900: #2B2924;
+
+  --white: #FFFFFF;
+  --surface: #F7F5EF;
+
+  --status-draft-bg: #F7F5EF;
+  --status-draft-text: #6E6A5D;
+  --status-draft-border: #DEDACB;
+
+  --status-sent-bg: #FBF1DF;
+  --status-sent-text: #B87A1E;
+  --status-sent-border: #EFCB8A;
+
+  --status-paid-bg: #EAF5EC;
+  --status-paid-text: #2F8F4E;
+  --status-paid-border: #A8D9B4;
+
+  --status-overdue-bg: #FBEAEA;
+  --status-overdue-text: #B23333;
+  --status-overdue-border: #E9A8A8;
+
+  --sections-light: #FFFFFF;
+  --sections-muted: #F7F5EF;
+  --sections-cta: #1F5C3F;
+  --sections-footer: #0F2E1F;
+}
+
+[data-theme="dark"] {
+  --background: #141311;
+  --foreground: #F5F2EB;
+
+  /* Theme colors - Dark mode */
+  --primary-50: #12241A;
+  --primary-200: #2B543D;
+  --primary-400: #5AA07C;
+  --primary-600: #76C298;
+  --primary-900: #E6F2EA;
+
+  --accent-50: #2E2211;
+  --accent-200: #543E1F;
+  --accent-400: #D4AC68;
+  --accent-600: #E3A84D;
+  --accent-900: #FBF3E6;
+
+  --success-50: #122617;
+  --success-200: #264D31;
+  --success-400: #6ECC88;
+  --success-600: #7FDA99;
+  --success-900: #EAF5EC;
+
+  --warning-50: #2D210F;
+  --warning-200: #543E1B;
+  --warning-400: #EAA945;
+  --warning-600: #F0A735;
+  --warning-900: #FBF1DF;
+
+  --danger-50: #2D1212;
+  --danger-200: #542424;
+  --danger-400: #E37878;
+  --danger-600: #EB4E4E;
+  --danger-900: #FBEAEA;
+
+  --neutral-50: #191816;
+  --neutral-100: #23211E;
+  --neutral-200: #32302A;
+  --neutral-400: #888478;
+  --neutral-600: #BFBAAD;
+  --neutral-900: #F5F2EB;
+
+  --white: #1E1D1A;
+  --surface: #141311;
+
+  --status-draft-bg: #191816;
+  --status-draft-text: #BFBAAD;
+  --status-draft-border: #32302A;
+
+  --status-sent-bg: #2D210F;
+  --status-sent-text: #F0A735;
+  --status-sent-border: #543E1B;
+
+  --status-paid-bg: #122617;
+  --status-paid-text: #7FDA99;
+  --status-paid-border: #264D31;
+
+  --status-overdue-bg: #2D1212;
+  --status-overdue-text: #EB4E4E;
+  --status-overdue-border: #542424;
+
+  --sections-light: #1E1D1A;
+  --sections-muted: #191816;
+  --sections-cta: #2B543D;
+  --sections-footer: #12241A;
 }
 
 @theme inline {
@@ -12,11 +141,9 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Smooth transition when changing theme colors */
+body, header, aside, main, table, tr, td, th, input, select, textarea, button, form {
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
 }
 
 body {

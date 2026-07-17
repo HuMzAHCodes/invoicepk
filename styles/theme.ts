@@ -11,62 +11,62 @@ const theme = {
 
     // Primary — brand, buttons, active states
     primary: {
-      50:  '#E8F0EA',
-      200: '#A9C9B4',
-      400: '#4B8867',
-      600: '#1F5C3F',
-      900: '#0F2E1F',
+      50:  'var(--primary-50)',
+      200: 'var(--primary-200)',
+      400: 'var(--primary-400)',
+      600: 'var(--primary-600)',
+      900: 'var(--primary-900)',
     },
 
     // Accent — used sparingly, highlights only
     accent: {
-      50:  '#FBF3E6',
-      200: '#E9C98C',
-      400: '#CBA05A',
-      600: '#B8863B',
-      900: '#5C431D',
+      50:  'var(--accent-50)',
+      200: 'var(--accent-200)',
+      400: 'var(--accent-400)',
+      600: 'var(--accent-600)',
+      900: 'var(--accent-900)',
     },
 
     // Success — paid invoices, positive amounts
     success: {
-      50:  '#EAF5EC',
-      200: '#A8D9B4',
-      400: '#5CB975',
-      600: '#2F8F4E',
-      900: '#163A22',
+      50:  'var(--success-50)',
+      200: 'var(--success-200)',
+      400: 'var(--success-400)',
+      600: 'var(--success-600)',
+      900: 'var(--success-900)',
     },
 
     // Warning — draft, sent, pending
     warning: {
-      50:  '#FBF1DF',
-      200: '#EFCB8A',
-      400: '#DE9F3E',
-      600: '#B87A1E',
-      900: '#5C3D0F',
+      50:  'var(--warning-50)',
+      200: 'var(--warning-200)',
+      400: 'var(--warning-400)',
+      600: 'var(--warning-600)',
+      900: 'var(--warning-900)',
     },
 
     // Danger — overdue, errors, delete actions
     danger: {
-      50:  '#FBEAEA',
-      200: '#E9A8A8',
-      400: '#D66565',
-      600: '#B23333',
-      900: '#591919',
+      50:  'var(--danger-50)',
+      200: 'var(--danger-200)',
+      400: 'var(--danger-400)',
+      600: 'var(--danger-600)',
+      900: 'var(--danger-900)',
     },
 
     // Neutral — body text, borders, table rows, backgrounds
     neutral: {
-      50:  '#F7F5EF',
-      100: '#F0EAE0',
-      200: '#DEDACB',
-      400: '#A8A395',
-      600: '#6E6A5D',
-      900: '#2B2924',
+      50:  'var(--neutral-50)',
+      100: 'var(--neutral-100)',
+      200: 'var(--neutral-200)',
+      400: 'var(--neutral-400)',
+      600: 'var(--neutral-600)',
+      900: 'var(--neutral-900)',
     },
 
     // Surface colors
-    white:   '#FFFFFF',
-    surface: '#F7F5EF', // neutral-50 — page background
+    white:   'var(--white)',
+    surface: 'var(--surface)', // neutral-50 — page background
   },
 
   // ─── Typography ──────────────────────────────────────────────────────────
@@ -157,34 +157,34 @@ const theme = {
 
   status: {
     draft: {
-      bg:   '#F7F5EF',
-      text: '#6E6A5D',
-      border: '#DEDACB',
+      bg:   'var(--status-draft-bg)',
+      text: 'var(--status-draft-text)',
+      border: 'var(--status-draft-border)',
     },
     sent: {
-      bg:   '#FBF1DF',
-      text: '#B87A1E',
-      border: '#EFCB8A',
+      bg:   'var(--status-sent-bg)',
+      text: 'var(--status-sent-text)',
+      border: 'var(--status-sent-border)',
     },
     paid: {
-      bg:   '#EAF5EC',
-      text: '#2F8F4E',
-      border: '#A8D9B4',
+      bg:   'var(--status-paid-bg)',
+      text: 'var(--status-paid-text)',
+      border: 'var(--status-paid-border)',
     },
     overdue: {
-      bg:   '#FBEAEA',
-      text: '#B23333',
-      border: '#E9A8A8',
+      bg:   'var(--status-overdue-bg)',
+      text: 'var(--status-overdue-text)',
+      border: 'var(--status-overdue-border)',
     },
   },
 
   // ─── Section Banding (landing page alternating backgrounds) ──────────────
 
   sections: {
-    light:  '#FFFFFF',        // white sections
-    muted:  '#F7F5EF',        // neutral-50 sections
-    cta:    '#1F5C3F',        // primary-600 — one bold CTA band only
-    footer: '#0F2E1F',        // primary-900 — dark footer
+    light:  'var(--sections-light)',        // white sections
+    muted:  'var(--sections-muted)',        // neutral-50 sections
+    cta:    'var(--sections-cta)',          // primary-600 — one bold CTA band only
+    footer: 'var(--sections-footer)',       // primary-900 — dark footer
   },
 
 } as const;
