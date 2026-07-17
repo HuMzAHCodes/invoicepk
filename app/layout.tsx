@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { fraunces, publicSans, plexMono } from "@/styles/fonts";
 import { AuthProvider } from "@/lib/auth-context";
 import { ToastProvider } from "@/components/Toast";
+import theme from "@/styles/theme";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -27,11 +28,29 @@ export default function RootLayout({
         ${plexMono.variable}
       `}
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  const savedTheme = localStorage.getItem('theme');
+                  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                  const currentTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+                  document.documentElement.setAttribute('data-theme', currentTheme);
+                } catch (e) {
+                  document.documentElement.setAttribute('data-theme', 'light');
+                }
+              })();
+            `,
+          }}
+        />
+      </head>
       <body
         style={{
           fontFamily: "var(--font-body)",
-          backgroundColor: "#F7F5EF",
-          color: "#2B2924",
+          backgroundColor: theme.colors.surface,
+          color: theme.colors.neutral[900],
           minHeight: "100vh",
           margin: 0,
         }}
