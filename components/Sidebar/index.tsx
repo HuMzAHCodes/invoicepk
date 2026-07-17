@@ -4,7 +4,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutGrid, FileText, Users, Settings, MessageCircle } from "lucide-react";
+import { LayoutGrid, FileText, Users, Settings, MessageCircle, BarChart3 } from "lucide-react";
 import theme from "@/styles/theme";
 
 // ─── Types ─────────────────────────────────────────────────────────────────
@@ -27,6 +27,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Invoices", href: "/invoices", icon: FileText },
   { label: "Clients", href: "/clients", icon: Users },
   { label: "Ask AI", href: "/assistant", icon: MessageCircle },
+  { label: "Analytics", href: "/analytics", icon: BarChart3 },
   { label: "Settings", href: "/settings", icon: Settings },
 ];
 
