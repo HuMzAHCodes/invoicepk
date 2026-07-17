@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import theme from "@/styles/theme";
+import ThemeToggle from "@/components/ThemeToggle";
 
 // ─── Styles ───
 
@@ -42,6 +43,7 @@ const ctaBtn: React.CSSProperties = {
 export default function DesktopLinks() {
   return (
     <div style={container}>
+      <ThemeToggle />
       <Link
         href="/login"
         style={signInLink}
