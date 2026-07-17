@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Menu } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import theme from "@/styles/theme";
+import ThemeToggle from "@/components/ThemeToggle";
 // import { useCursorContext } from "@/components/CustomCursor/CursorProvider";
 
 // ─── Types ─────────────────────────────────────────────────────────────────
@@ -242,8 +243,9 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
           </Link>
         </div>
 
-        {/* Right: avatar + username */}
+        {/* Right: theme toggle + avatar + username */}
         <div style={rightGroupStyle}>
+          <ThemeToggle />
           <span style={usernameStyle}>{displayName}</span>
           <div style={avatarStyle} aria-hidden="true">
             {initial}
