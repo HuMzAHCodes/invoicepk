@@ -56,11 +56,21 @@ export default function AnalyticsCharts({
   pipelineBreakdown,
 }: AnalyticsChartsProps) {
   const [mounted, setMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   // Prevent SSR layout/hydration warnings due to Recharts' ResizeObserver dependency
   useEffect(() => {
     const timer = setTimeout(() => setMounted(true), 0);
     return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    function check() {
+      setIsMobile(window.innerWidth < 640);
+    }
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
   }, []);
 
   if (!mounted) {
@@ -93,6 +103,15 @@ export default function AnalyticsCharts({
     { name: "GST (Sales Tax)", amount: taxes.gst, color: "var(--primary-400)" },
     { name: "WHT (Withheld)", amount: taxes.wht, color: "var(--accent-400)" },
   ];
+
+  // Responsive chart sizing — shrinks heights/margins on narrow viewports
+  // instead of letting Recharts squeeze a 300px-tall desktop layout.
+  const trendChartHeight = isMobile ? 240 : 300;
+  const donutChartHeight = isMobile ? 220 : 260;
+  const barChartHeight = isMobile ? 260 : 300;
+  const clientAxisWidth = isMobile ? 56 : 90;
+  const donutInnerRadius = isMobile ? 52 : 65;
+  const donutOuterRadius = isMobile ? 70 : 85;
 
   // ─── Styles ────────────────────────────────────────────────────────────
 
@@ -209,12 +228,12 @@ export default function AnalyticsCharts({
   return (
     <div style={containerGrid}>
       {/* Chart 1: Revenue Monthly Trend (Line / Area) */}
-      <div style={{ ...chartCard, gridColumn: "span 2" }}>
+      <div style={{ ...chartCard, gridColumn: isMobile ? undefined : "span 2" }}>
         <h3 style={chartTitle}>Monthly Billings vs. Collections</h3>
         <p style={chartDescription}>Track invoice volume against cash actually received (past 6 months)</p>
-        <div style={{ width: "100%", height: 300 }}>
+        <div style={{ width: "100%", height: trendChartHeight }}>
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={monthlyTrend} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+            <AreaChart data={monthlyTrend} margin={{ top: 10, right: 10, left: isMobile ? -20 : -10, bottom: 0 }}>
               <defs>
                 <linearGradient id="colorBilled" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="var(--primary-600)" stopOpacity={0.15}/>
@@ -241,7 +260,7 @@ export default function AnalyticsCharts({
       <div style={chartCard}>
         <h3 style={chartTitle}>Invoice Status Share</h3>
         <p style={chartDescription}>Billing distribution by current invoice statuses</p>
-        <div style={{ width: "100%", height: 260, position: "relative" }}>
+        <div style={{ width: "100%", height: donutChartHeight, position: "relative" }}>
           {pipelineData.length === 0 ? (
             <div style={noDataContainer}>No invoicing data available.</div>
           ) : (
@@ -251,8 +270,8 @@ export default function AnalyticsCharts({
                   data={pipelineData}
                   cx="50%"
                   cy="50%"
-                  innerRadius={65}
-                  outerRadius={85}
+                  innerRadius={donutInnerRadius}
+                  outerRadius={donutOuterRadius}
                   paddingAngle={4}
                   dataKey="value"
                 >
@@ -279,7 +298,7 @@ export default function AnalyticsCharts({
       <div style={chartCard}>
         <h3 style={chartTitle}>Top 5 Clients by Revenue</h3>
         <p style={chartDescription}>Which accounts generated the most billings</p>
-        <div style={{ width: "100%", height: 300 }}>
+        <div style={{ width: "100%", height: barChartHeight }}>
           {clientBilling.length === 0 ? (
             <div style={noDataContainer}>No client billing history found.</div>
           ) : (
@@ -287,7 +306,7 @@ export default function AnalyticsCharts({
               <BarChart data={clientBilling} layout="vertical" margin={{ top: 10, right: 10, left: 10, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--neutral-200)" horizontal={false} />
                 <XAxis type="number" tick={textStyle} stroke="var(--neutral-200)" tickFormatter={(v) => v >= 1000 ? `${(v/1000).toFixed(0)}k` : v} />
-                <YAxis dataKey="name" type="category" tick={textStyle} stroke="var(--neutral-200)" width={90} />
+                <YAxis dataKey="name" type="category" tick={textStyle} stroke="var(--neutral-200)" width={clientAxisWidth} />
                 <Tooltip content={<ClientTooltip />} />
                 <Bar name="Total Billed" dataKey="billed" fill="var(--primary-400)" radius={[0, 4, 4, 0]} barSize={16} />
               </BarChart>
@@ -300,7 +319,7 @@ export default function AnalyticsCharts({
       <div style={chartCard}>
         <h3 style={chartTitle}>Sales Tax vs. Withholding Tax</h3>
         <p style={chartDescription}>GST collected (receivable liability) vs WHT withheld by clients</p>
-        <div style={{ width: "100%", height: 300 }}>
+        <div style={{ width: "100%", height: barChartHeight }}>
           {taxes.gst === 0 && taxes.wht === 0 ? (
             <div style={noDataContainer}>No tax records found.</div>
           ) : (
@@ -328,14 +347,14 @@ export default function AnalyticsCharts({
 
 const containerGrid: React.CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))",
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(360px, 100%), 1fr))",
   gap: "24px",
   width: "100%",
 };
 
 const skeletonContainerGrid: React.CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))",
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(360px, 100%), 1fr))",
   gap: "24px",
   width: "100%",
 };
