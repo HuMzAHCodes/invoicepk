@@ -65,6 +65,8 @@
   --sections-muted: #F7F5EF;
   --sections-cta: #1F5C3F;
   --sections-footer: #0F2E1F;
+
+  --nav-glass-bg: rgba(247, 245, 239, 0.85);
 }
 
 [data-theme="dark"] {
@@ -132,6 +134,8 @@
   --sections-muted: #191816;
   --sections-cta: #2B543D;
   --sections-footer: #12241A;
+
+  --nav-glass-bg: rgba(25, 24, 22, 0.85);
 }
 
 @theme inline {
