@@ -212,7 +212,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
         style={{
           ...navbarStyle,
           backgroundColor: scrolled
-            ? "rgba(247, 245, 239, 0.85)"
+            ? "var(--nav-glass-bg)"
             : theme.colors.white,
           backdropFilter: scrolled ? "blur(12px)" : "none",
           WebkitBackdropFilter: scrolled ? "blur(12px)" : "none",

@@ -172,7 +172,7 @@ export default function Navbar() {
           ...nav,
           position: "sticky",
           backgroundColor: scrolled
-            ? "rgba(247, 245, 239, 0.85)"
+            ? "var(--nav-glass-bg)"
             : theme.colors.neutral[50],
           backdropFilter: scrolled ? "blur(12px)" : "none",
           WebkitBackdropFilter: scrolled ? "blur(12px)" : "none",
