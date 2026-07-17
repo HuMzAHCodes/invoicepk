@@ -98,9 +98,11 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     display: "flex",
     flexDirection: "column",
     gap: "2px",
-    padding: collapsed ? "16px 8px" : "16px 12px",
-    flex: 1,
     paddingTop: "80px",
+    paddingRight: collapsed ? "8px" : "12px",
+    paddingBottom: "16px",
+    paddingLeft: collapsed ? "8px" : "12px",
+    flex: 1,
   };
 
   function getNavItemStyle(href: string): React.CSSProperties {
