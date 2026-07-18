@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, Suspense } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { apiGet } from '@/lib/api-client';
 import InvoiceFilters from '@/components/Invoices/InvoiceFilters';
 import InvoiceTable from '@/components/Invoices/InvoiceTable';
@@ -34,14 +35,16 @@ interface InvoicesResponse {
 
 // ─── Page ──────────────────────────────────────────────────────────────────
 
-export default function InvoicesPage() {
+function InvoicesPageContent() {
   // ─── State ─────────────────────────────────────────────────────────────
+
+  const searchParams = useSearchParams();
 
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [limit] = useState(20);
-  const [status, setStatus] = useState('All');
+  const [status, setStatus] = useState(() => searchParams.get('status') ?? 'All');
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
   const [loading, setLoading] = useState(true);
@@ -277,5 +280,15 @@ export default function InvoicesPage() {
         </>
       )}
     </div>
+  );
+}
+
+// ─── Page ──────────────────────────────────────────────────────────────────
+
+export default function InvoicesPage() {
+  return (
+    <Suspense fallback={<InvoiceSkeleton />}>
+      <InvoicesPageContent />
+    </Suspense>
   );
 }
