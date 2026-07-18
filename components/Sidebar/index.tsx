@@ -6,7 +6,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutGrid, FileText, Users, Settings, MessageCircle, BarChart3 } from "lucide-react";
 import theme from "@/styles/theme";
-import SidebarTipCard from "./SidebarTipCard";
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -212,8 +211,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             );
           })}
         </nav>
-
-        {!collapsed && <SidebarTipCard />}
       </aside>
     </>
   );

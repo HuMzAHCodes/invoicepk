@@ -10,7 +10,6 @@ import { getBusinessForUser } from '@/lib/get-business';
 import { serializeInvoice } from '@/lib/serialize';
 import { calculateInvoice, validateGSTRate } from '@/lib/gst';
 import { getNextInvoiceNumber } from '@/lib/invoice-number';
-import { FREE_TIER_MONTHLY_LIMIT } from '@/lib/constants';
 import Invoice from '@/models/Invoice';
 import Client from '@/models/Client';
 
@@ -63,13 +62,7 @@ export async function GET(req: NextRequest) {
 
       // Build filter
       const filter: any = { businessId: business._id };
-      if (status === 'overdue') {
-        // "Overdue" isn't a stored status — it's a sent invoice past its due date.
-        filter.status  = 'sent';
-        filter.dueDate = { $ne: null, $lt: new Date() };
-      } else if (status) {
-        filter.status = status;
-      }
+      if (status)   filter.status   = status;
       if (clientId) filter.clientId = clientId;
       if (from || to) {
         filter.issueDate = {};
@@ -197,10 +190,10 @@ export async function POST(req: NextRequest) {
         createdAt:  { $gte: startOfMonth },
       });
 
-      if (invoicesThisMonth >= FREE_TIER_MONTHLY_LIMIT) {
+      if (invoicesThisMonth >= 5) {
         console.log(`[POST /api/invoices] Free tier limit reached | businessId: ${business._id}`);
         return NextResponse.json(
-          { error: { code: 'LIMIT_EXCEEDED', message: `Free tier limit of ${FREE_TIER_MONTHLY_LIMIT} invoices per month reached.`, status: 429 } },
+          { error: { code: 'LIMIT_EXCEEDED', message: 'Free tier limit of 5 invoices per month reached.', status: 429 } },
           { status: 429 }
         );
       }

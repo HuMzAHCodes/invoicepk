@@ -7,7 +7,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
 import { withAuth } from '@/lib/withAuth';
 import { getBusinessForUser } from '@/lib/get-business';
-import { FREE_TIER_MONTHLY_LIMIT } from '@/lib/constants';
 import Invoice from '@/models/Invoice';
 
 export async function GET(req: NextRequest) {
@@ -33,7 +32,7 @@ export async function GET(req: NextRequest) {
       startOfMonth.setHours(0, 0, 0, 0);
 
       // Run all aggregations in parallel
-      const [statusCounts, revenueAgg, outstandingAgg, monthlyInvoiceCount, overdueAgg] = await Promise.all([
+      const [statusCounts, revenueAgg, outstandingAgg] = await Promise.all([
 
         // Count invoices by status
         Invoice.aggregate([
@@ -74,30 +73,6 @@ export async function GET(req: NextRequest) {
           },
         ]),
 
-        // Invoices created this calendar month — for free-tier remaining count
-        Invoice.countDocuments({
-          businessId,
-          createdAt: { $gte: startOfMonth },
-        }),
-
-        // Overdue — sent invoices past their due date
-        Invoice.aggregate([
-          {
-            $match: {
-              businessId,
-              status:  'sent',
-              dueDate: { $ne: null, $lt: new Date() },
-            },
-          },
-          {
-            $group: {
-              _id:     null,
-              count:   { $sum: 1 },
-              amount:  { $sum: '$total' },
-            },
-          },
-        ]),
-
       ]);
 
       // Build status breakdown
@@ -113,8 +88,6 @@ export async function GET(req: NextRequest) {
 
       const revenueThisMonth  = revenueAgg[0]?.revenue     ?? 0;
       const outstandingAmount = outstandingAgg[0]?.outstanding ?? 0;
-      const overdueCount      = overdueAgg[0]?.count  ?? 0;
-      const overdueAmount     = overdueAgg[0]?.amount ?? 0;
 
       console.log(`[GET /api/dashboard/stats] Success | total: ${totalInvoices} | status: 200`);
 
@@ -125,10 +98,6 @@ export async function GET(req: NextRequest) {
           revenueThisMonth,
           revenueCurrency:  business.currency,
           outstandingAmount,
-          monthlyInvoiceCount,
-          freeTierLimit: FREE_TIER_MONTHLY_LIMIT,
-          overdueCount,
-          overdueAmount,
         },
       });
 
