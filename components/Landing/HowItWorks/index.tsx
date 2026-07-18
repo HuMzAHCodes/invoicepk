@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { FiFileText, FiHash, FiDownload } from "react-icons/fi";
+import { FiMic, FiHash, FiDownload } from "react-icons/fi";
 import theme from "@/styles/theme";
 import { CursorZone } from "@/components/CustomCursor";
 
@@ -114,21 +114,21 @@ const stepDesc: React.CSSProperties = {
 const steps = [
   {
     num: "01",
-    icon: <FiFileText size={24} color={theme.colors.primary[600]} />,
-    title: "Fill your invoice",
-    desc: "Add client, line items, GST type — done in minutes.",
+    icon: <FiMic size={24} color={theme.colors.primary[600]} />,
+    title: "Describe or speak it",
+    desc: "Type a description or just talk — AI drafts the invoice for you.",
   },
   {
     num: "02",
     icon: <FiHash size={24} color={theme.colors.primary[600]} />,
-    title: "GST auto-calculated",
-    desc: "WHT, zero-rated, standard — all handled automatically.",
+    title: "GST & WHT auto-calculated",
+    desc: "Standard, zero-rated, or withholding tax — FBR rules applied automatically.",
   },
   {
     num: "03",
     icon: <FiDownload size={24} color={theme.colors.primary[600]} />,
-    title: "Download PDF",
-    desc: "FBR-compliant PDF ready to send to your client.",
+    title: "Download PDF or ask AI",
+    desc: "Get an FBR-ready PDF, or ask the AI assistant about overdue invoices and client balances.",
   },
 ];
 
