@@ -27,6 +27,7 @@ export default function StatsRow({ stats }: StatsRowProps) {
       <StatsCard
         label="Total Invoices"
         value={stats.totalInvoices}
+        currency=""
         sub={sub}
         href="/invoices"
         delay={0}
