@@ -88,6 +88,14 @@ const faqs = [
     a: "Yes. GST at 17%, zero-rated for IT exports, WHT support, NTN and STRN on every PDF.",
   },
   {
+    q: "Can AI create my invoice for me?",
+    a: "Yes. Describe your invoice in plain English or use your voice, and AI drafts the client, line items, and totals for you to review before sending.",
+  },
+  {
+    q: "Can I ask questions about my invoices?",
+    a: "Yes. The built-in AI chat can tell you which invoices are overdue, a client's balance, or a summary of the month — pulled directly from your data.",
+  },
+  {
     q: "Do I need an STRN?",
     a: "Only if you charge GST. You can use InvoicePK without an STRN for exempt or zero-rated invoices.",
   },
