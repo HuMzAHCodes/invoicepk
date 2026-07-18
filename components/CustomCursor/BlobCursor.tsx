@@ -5,9 +5,10 @@ import { gsap } from "gsap";
 
 interface BlobCursorProps {
   isActive?: boolean;
+  zoneColor?: string;
 }
 
-export default function BlobCursor({ isActive = false }: BlobCursorProps) {
+export default function BlobCursor({ isActive = false, zoneColor }: BlobCursorProps) {
   const cursorRef = useRef<HTMLDivElement>(null);
 
   const mouse = { x: -9999, y: -9999 };
@@ -69,7 +70,11 @@ export default function BlobCursor({ isActive = false }: BlobCursorProps) {
       ref={cursorRef}
       className={`blob-cursor ${isActive ? "visible" : ""}`}
       aria-hidden="true"
-      style={{ pointerEvents: "none", zIndex: 9999 }}
+      style={{
+        pointerEvents: "none",
+        zIndex: 9999,
+        ...(zoneColor ? ({ "--cursor-color": zoneColor } as React.CSSProperties) : {}),
+      }}
     />
   );
 }

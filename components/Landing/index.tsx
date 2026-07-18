@@ -14,7 +14,7 @@ export default function Landing() {
     //    keeps it a CursorContext descendant (needs useCursorContext for smoother)
     //    while still staying outside #smooth-content (needs to for position:sticky)
     <CursorProvider
-      targetIds={["how-it-works", "faq", "pricing"]}
+      targetIds={["how-it-works", "faq", "pricing", "footer"]}
       sticky={<Navbar />}
     >
       <Hero />
