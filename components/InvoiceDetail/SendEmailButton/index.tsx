@@ -168,6 +168,7 @@ export default function SendEmailButton({
       setMessage("");
       onSend?.();
     } catch (err) {
+      console.error("[SendEmailButton] Failed to send invoice email:", err);
       setError(err instanceof Error ? err.message : "Failed to send email");
     } finally {
       setLoading(false);

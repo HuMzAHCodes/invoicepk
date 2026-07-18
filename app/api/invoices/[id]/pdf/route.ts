@@ -11,6 +11,11 @@ import { withAuth } from '@/lib/withAuth';
 import { getBusinessForUser } from '@/lib/get-business';
 import { checkOwnership } from '@/lib/ownership';
 import Invoice from '@/models/Invoice';
+// Registering this schema is required even though it's not referenced directly below:
+// this route is bundled in isolation on Vercel, so nothing else registers it before
+// Invoice.findById(...).populate('clientId', ...) runs, causing a MissingSchemaError
+// on every invocation without this import.
+import '@/models/Client';
 import InvoicePDFTemplate from '@/components/InvoicePDF/InvoicePDFTemplate';
 
 export async function GET(
