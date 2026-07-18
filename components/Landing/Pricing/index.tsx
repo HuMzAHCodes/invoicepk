@@ -174,7 +174,7 @@ const freeFeatures = [
 
 const proFeatures = [
   "Unlimited invoices",
-  "Everything in Free",
+  "Everything in Free plan",
   "Logo upload",
   "Save PDF to cloud",
   "Dashboard stats",
