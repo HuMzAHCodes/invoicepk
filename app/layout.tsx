@@ -22,6 +22,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`
         ${fraunces.variable}
         ${publicSans.variable}
