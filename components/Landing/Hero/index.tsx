@@ -155,12 +155,12 @@ const ctaSecondary: React.CSSProperties = {
   textDecoration: "none",
 };
 
-// Number counter — white text
+// Number counter — accent gold
 const counterSection: React.CSSProperties = {
   fontFamily: theme.fonts.mono,
   fontSize: theme.fontSizes["2xl"],
   fontWeight: theme.fontWeights.bold,
-  color: theme.colors.white,
+  color: theme.colors.accent[400],
 };
 
 // Counter label — cream
