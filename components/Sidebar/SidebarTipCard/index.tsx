@@ -149,7 +149,7 @@ export default function SidebarTipCard() {
       {/* Ambient blob background */}
       <div
         ref={blobRef}
-        className="pointer-events-none absolute h-28 w-28 rounded-full bg-[var(--primary-600)]/35 blur-xl"
+        className="pointer-events-none absolute h-28 w-28 rounded-full bg-[var(--primary-600)]/45 blur-xl"
         style={{ left: BLOB_POS_TOP_LEFT.left, top: BLOB_POS_TOP_LEFT.top }}
         aria-hidden="true"
       />
