@@ -42,6 +42,7 @@ export function CursorProvider({
   targetIds?: string[];
 }) {
   const [isActive, setIsActive] = useState(false);
+  const [isOverFooter, setIsOverFooter] = useState(false);
   const [smoother, setSmoother] = useState<any>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -83,6 +84,12 @@ export function CursorProvider({
             // Active if ANY target section is intersecting
             const anyActive = Array.from(sectionStates.values()).some((v) => v);
             setIsActive(anyActive);
+
+            // Footer bg matches the cursor's default fill color — track it separately
+            // so the cursor can switch to a visible color while over it.
+            if (id === "footer") {
+              setIsOverFooter(entry.isIntersecting);
+            }
           });
         },
         { rootMargin: "100px", threshold: 0.1 },
@@ -116,7 +123,12 @@ export function CursorProvider({
           {children}
         </div>
       </div>
-      {isActive && <BlobCursor isActive={isActive} />}
+      {isActive && (
+        <BlobCursor
+          isActive={isActive}
+          zoneColor={isOverFooter ? "#FFFFFF" : undefined}
+        />
+      )}
     </CursorContext.Provider>
   );
 }

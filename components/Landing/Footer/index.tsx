@@ -126,7 +126,7 @@ export default function Footer() {
   return (
     <>
       <style>{responsiveCSS}</style>
-      <footer style={footer}>
+      <footer id="footer" style={footer}>
         <div className="footer-cols" style={container}>
           {/* Brand */}
           <div style={col}>
