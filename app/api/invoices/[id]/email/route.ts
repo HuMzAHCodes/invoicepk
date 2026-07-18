@@ -10,6 +10,11 @@ import { withAuth } from '@/lib/withAuth';
 import { getBusinessForUser } from '@/lib/get-business';
 import { checkOwnership } from '@/lib/ownership';
 import Invoice from '@/models/Invoice';
+// Registering this schema is required even though it's not referenced directly below:
+// this route is bundled in isolation on Vercel, so nothing else registers it before
+// Invoice.findById(...).populate('clientId', ...) runs, causing a MissingSchemaError
+// on every invocation without this import.
+import '@/models/Client';
 import InvoicePDFTemplate from '@/components/InvoicePDF/InvoicePDFTemplate';
 import { sendInvoiceEmail } from '@/lib/email';
 
@@ -180,8 +185,9 @@ export async function POST(
 
     } catch (err) {
       console.error(`[POST /api/invoices/${id}/email] ERROR:`, err);
+      const reason = err instanceof Error ? err.message : String(err);
       return NextResponse.json(
-        { error: { code: 'SERVER_ERROR', message: 'Failed to send email.', status: 500 } },
+        { error: { code: 'SERVER_ERROR', message: `Failed to send email: ${reason}`, status: 500 } },
         { status: 500 }
       );
     }

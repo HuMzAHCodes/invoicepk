@@ -45,6 +45,8 @@ export interface IInvoice extends Document {
   notes?:        string;
   pdfUrl?:       string;              // Cloudinary URL — set after PDF saved
   items:         IInvoiceItem[];
+  lastReminderSentAt?: Date;          // Set when an overdue payment reminder was last emailed
+  reminderCount: number;              // Count of reminders sent so far (drives cadence in lib/reminders.ts)
   createdAt:     Date;
   updatedAt:     Date;
 }
@@ -70,6 +72,8 @@ const InvoiceSchema = new Schema<IInvoice>(
     notes:         { type: String, trim: true, default: null },
     pdfUrl:        { type: String, default: null },
     items:         { type: [InvoiceItemSchema], default: [] },
+    lastReminderSentAt: { type: Date, default: null },
+    reminderCount:      { type: Number, default: 0, min: 0 },
   },
   { timestamps: true }
 );
