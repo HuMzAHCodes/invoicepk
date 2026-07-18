@@ -16,7 +16,7 @@ interface InvoiceFiltersProps {
 
 // ─── Constants ─────────────────────────────────────────────────────────────
 
-const STATUS_OPTIONS = ["All", "Draft", "Sent", "Paid", "Overdue"];
+const STATUS_OPTIONS = ["All", "Draft", "Sent", "Paid"];
 
 // ─── Component ─────────────────────────────────────────────────────────────
 

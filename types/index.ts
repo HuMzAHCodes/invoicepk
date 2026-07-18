@@ -72,19 +72,15 @@ export interface ClientSummary {
 // ─── Dashboard ─────────────────────────────────────────────────────────────
 
 export interface DashboardStats {
-  totalInvoices:       number;
+  totalInvoices:     number;
   byStatus: {
     draft: number;
     sent:  number;
     paid:  number;
   };
-  revenueThisMonth:    number;
-  revenueCurrency:     string;
-  outstandingAmount:   number;
-  monthlyInvoiceCount: number;
-  freeTierLimit:       number;
-  overdueCount:        number;
-  overdueAmount:       number;
+  revenueThisMonth:  number;
+  revenueCurrency:   string;
+  outstandingAmount: number;
 }
 
 // ─── API Response Wrappers ─────────────────────────────────────────────────

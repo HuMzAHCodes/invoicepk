@@ -99,17 +99,6 @@ export function formatUSD(amount: number): string {
   }).format(amount);
 }
 
-// Next FBR sales tax return deadline — the 15th of the month following the
-// current one. If today is on/before the 15th, the deadline is this month's 15th.
-export function getNextGstDeadline(now: Date = new Date()): Date {
-  const deadline = new Date(now.getFullYear(), now.getMonth(), 15);
-  if (now.getDate() > 15) {
-    deadline.setMonth(deadline.getMonth() + 1);
-  }
-  deadline.setHours(0, 0, 0, 0);
-  return deadline;
-}
-
 
 
 
