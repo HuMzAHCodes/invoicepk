@@ -4,6 +4,9 @@ import Link from "next/link";
 import { X } from "lucide-react";
 import { motion } from "framer-motion";
 import theme from "@/styles/theme";
+import { useCursorContext } from "@/components/CustomCursor";
+import ThemeToggle from "@/components/ThemeToggle";
+import { links } from "../CenterLinks";
 
 // ─── Props ───
 interface MobileMenuProps {
@@ -77,8 +80,37 @@ const ctaBtn: React.CSSProperties = {
   marginTop: theme.spacing[4],
 };
 
+// Theme toggle row
+const themeRow: React.CSSProperties = {
+  display: "flex",
+  justifyContent: "flex-end",
+};
+
 // ─── Component ───
 export default function MobileMenu({ onClose }: MobileMenuProps) {
+  const { smoother } = useCursorContext();
+
+  // Handle same-page anchor navigation using GSAP ScrollSmoother, then close the panel
+  const handleAnchorClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string,
+  ) => {
+    e.preventDefault();
+
+    const id = href.replace("#", "");
+    const target = document.getElementById(id);
+
+    if (target) {
+      if (smoother) {
+        smoother.scrollTo(target, true, "top top");
+      } else {
+        target.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+
+    onClose();
+  };
+
   return (
     <>
       <motion.div
@@ -98,6 +130,27 @@ export default function MobileMenu({ onClose }: MobileMenuProps) {
         <button style={closeBtn} onClick={onClose}>
           <X size={24} />
         </button>
+
+        <div style={themeRow}>
+          <ThemeToggle />
+        </div>
+
+        {links.map((l) =>
+          l.isAnchor ? (
+            <a
+              key={l.label}
+              href={l.href}
+              style={link}
+              onClick={(e) => handleAnchorClick(e, l.href)}
+            >
+              {l.label}
+            </a>
+          ) : (
+            <Link key={l.label} href={l.href} style={link} onClick={onClose}>
+              {l.label}
+            </Link>
+          ),
+        )}
 
         <Link href="/login" style={link} onClick={onClose}>
           Sign In

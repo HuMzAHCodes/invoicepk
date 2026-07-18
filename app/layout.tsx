@@ -22,6 +22,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`
         ${fraunces.variable}
         ${publicSans.variable}
@@ -35,8 +36,7 @@ export default function RootLayout({
               (function() {
                 try {
                   const savedTheme = localStorage.getItem('theme');
-                  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                  const currentTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+                  const currentTheme = savedTheme === 'dark' ? 'dark' : 'light';
                   document.documentElement.setAttribute('data-theme', currentTheme);
                 } catch (e) {
                   document.documentElement.setAttribute('data-theme', 'light');

@@ -60,7 +60,7 @@ const hoverCSS = `
 
 // ─── Data ──────────────────────────────────────────────────────────────────
 
-const links = [
+export const links = [
   { label: "About Us", href: "#faq", isAnchor: true },
   { label: "How it Works", href: "#how-it-works", isAnchor: true },
   { label: "Invoices", href: "/dashboard", isAnchor: false },
