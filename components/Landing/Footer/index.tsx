@@ -1,4 +1,7 @@
+"use client";
+
 import theme from "@/styles/theme";
+import { useCursorContext } from "@/components/CustomCursor";
 
 // ─── Styles ───
 
@@ -98,6 +101,28 @@ const responsiveCSS = `
 
 // ─── Component ───
 export default function Footer() {
+  const { smoother } = useCursorContext();
+
+  // Same smoother-aware anchor scroll used by the navbar (components/Landing/Navbar/CenterLinks) —
+  // plain <a href="#id"> jumps don't work here since GSAP ScrollSmoother owns scrolling.
+  const handleAnchorClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string,
+  ) => {
+    e.preventDefault();
+
+    const id = href.replace("#", "");
+    const target = document.getElementById(id);
+
+    if (!target) return;
+
+    if (smoother) {
+      smoother.scrollTo(target, true, "top top");
+    } else {
+      target.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <>
       <style>{responsiveCSS}</style>
@@ -113,13 +138,25 @@ export default function Footer() {
           {/* Links */}
           <div style={col}>
             <div style={colHeading}>Product</div>
-            <a href="#how-it-works" style={linkItem}>
+            <a
+              href="#how-it-works"
+              style={linkItem}
+              onClick={(e) => handleAnchorClick(e, "#how-it-works")}
+            >
               How it works
             </a>
-            <a href="#pricing" style={linkItem}>
+            <a
+              href="#pricing"
+              style={linkItem}
+              onClick={(e) => handleAnchorClick(e, "#pricing")}
+            >
               Pricing
             </a>
-            <a href="#faq" style={linkItem}>
+            <a
+              href="#faq"
+              style={linkItem}
+              onClick={(e) => handleAnchorClick(e, "#faq")}
+            >
               FAQ
             </a>
           </div>
