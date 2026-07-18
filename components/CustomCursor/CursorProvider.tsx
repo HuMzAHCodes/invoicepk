@@ -56,7 +56,6 @@ export function CursorProvider({
       smooth: 1.5,
       effects: true,
       smoothTouch: 0.1,
-      normalizeScroll: true,
       ignoreMobileResize: true,
     });
 
